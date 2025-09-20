@@ -1,0 +1,23 @@
+# Visual Studio / Rider specific
+.vs/
+
+# User-specific files
+*.sln.docstates
+
+# Build results
+[Bb]in/
+[Oo]bj/
+publish/
+
+# Log files
+*.log
+
+# Temp files
+*.tmp
+
+# Packages
+/packages/
+
+# Blazor specific
+obj/Debug/net8.0/scopedcss/bundle/
+obj/Debug/net8.0/scopedcss/projectbundle/
