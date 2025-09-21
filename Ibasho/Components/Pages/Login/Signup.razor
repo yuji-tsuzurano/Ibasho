@@ -1,0 +1,27 @@
+﻿@page "/signup"
+@layout Ibasho.Components.Layout.LoginLayout
+
+<PageTitle>Ibasho - アカウント作成</PageTitle>
+
+<h2 class="text-2xl font-bold text-center text-gray-800">新規会員登録</h2>
+<form class="space-y-6">
+    <div>
+        <label for="signup-username" class="text-sm font-medium text-gray-700">ユーザー名</label>
+        <input id="signup-username" type="text" required class="w-full px-4 py-2 mt-2 text-gray-700 bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400" placeholder="Ibashoユーザー">
+    </div>
+    <div>
+        <label for="signup-email" class="text-sm font-medium text-gray-700">メールアドレス</label>
+        <input id="signup-email" type="email" required class="w-full px-4 py-2 mt-2 text-gray-700 bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400" placeholder="your@email.com">
+    </div>
+    <div>
+        <label for="signup-password" class="text-sm font-medium text-gray-700">パスワード</label>
+        <input id="signup-password" type="password" required class="w-full px-4 py-2 mt-2 text-gray-700 bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400" placeholder="Password">
+    </div>
+    <button onclick="event.preventDefault(); location.href = '/';"
+            type="submit" class="w-full px-4 py-3 font-semibold text-white bg-sky-500 rounded-lg hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 transition-colors duration-300">
+        登録する
+    </button>
+</form>
+<div class="text-center">
+    <a href="/" class="text-sm text-sky-500 hover:underline">アカウントをお持ちですか？ ログイン</a>
+</div>

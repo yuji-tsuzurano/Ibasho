@@ -1,0 +1,23 @@
+﻿@page "/notifications"
+@layout Ibasho.Components.Layout.MainLayout2
+
+<PageTitle>Ibasho - 通知</PageTitle>
+
+<div class="space-y-4">
+    <header class="text-center py-4 text-xl font-bold text-sky-500 border-b bg-white/80 backdrop-blur-sm sticky top-0">Ibasho</header>
+    <div class="p-4">
+        <h1 class="text-2xl font-bold text-gray-800">通知</h1>
+        <div class="space-y-3 mt-4">
+            <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm flex items-center space-x-4">
+                <svg class="w-6 h-6 text-pink-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
+                <img class="w-10 h-10 rounded-full cursor-pointer" onclick="showContent('user-profile')" src="https://placehold.co/100x100/E2E8F0/4A5568?text=User" alt="User Avatar">
+                <p class="flex-1"><span class="font-bold">ユーザー名１</span>さんがあなたの投稿に「いいね」しました。</p>
+            </div>
+            <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm flex items-center space-x-4">
+                <svg class="w-6 h-6 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                <img class="w-10 h-10 rounded-full cursor-pointer" onclick="showContent('user-profile')" src="https://placehold.co/100x100/A0AEC0/FFFFFF?text=U2" alt="User Avatar">
+                <p class="flex-1"><span class="font-bold">ユーザー名２</span>さんがあなたをフォローしました。</p>
+            </div>
+        </div>
+    </div>
+</div>
