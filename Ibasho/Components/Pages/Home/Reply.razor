@@ -1,0 +1,40 @@
+﻿@page "/reply"
+@layout Ibasho.Components.Layout.MainLayout2
+
+<PageTitle>Ibasho - 返信</PageTitle>
+
+<div class="space-y-4">
+    <div class="flex items-center space-x-3 p-4">
+        <button onclick="event.preventDefault(); location.href = '/home';" class="p-2 rounded-full hover:bg-gray-100">
+            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </button>
+        <h1 class="text-2xl font-bold text-gray-800">ポスト</h1>
+    </div>
+    <div class="p-4 bg-white border-y border-gray-200">
+        <div class="flex items-start space-x-3">
+            <img class="w-12 h-12 rounded-full cursor-pointer" onclick="showContent('user-profile')" src="https://placehold.co/100x100/E2E8F0/4A5568?text=User" alt="User Avatar">
+            <div class="flex-1">
+                <div class="flex items-center space-x-2">
+                    <span class="font-bold">ユーザー名１</span>
+                    <span class="text-sm text-gray-500">@("@user1")</span>
+                </div>
+                <p class="mt-1 text-lg">Tailwind CSSを使ってSNSのUIを作るの、楽しい！ライトブルーがいい感じ。</p>
+                <p class="text-sm text-gray-500 mt-2">10:30 AM · 2025/09/20</p>
+            </div>
+        </div>
+    </div>
+    <div class="p-4 border-b border-gray-200 flex items-start space-x-3">
+        <img class="w-10 h-10 rounded-full" src="https://placehold.co/150x150/93C5FD/FFFFFF?text=Me" alt="My Avatar">
+        <textarea class="w-full p-2 border-none rounded-lg focus:ring-0 resize-none bg-transparent" rows="2" placeholder="返信を投稿"></textarea>
+        <button class="px-5 py-2 text-sm font-semibold text-white bg-sky-500 rounded-full hover:bg-sky-600 self-end">返信</button>
+    </div>
+    <div class="p-4 space-y-4">
+        <div class="flex items-start space-x-3">
+            <img class="w-10 h-10 rounded-full cursor-pointer" onclick="showContent('user-profile')" src="https://placehold.co/100x100/A0AEC0/FFFFFF?text=U2" alt="User Avatar">
+            <div class="flex-1 bg-gray-100 p-3 rounded-xl">
+                <span class="font-bold">ユーザー名２</span>
+                <p class="mt-1">わかります！とても便利ですよね。</p>
+            </div>
+        </div>
+    </div>
+</div>

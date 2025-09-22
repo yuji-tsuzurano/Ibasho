@@ -4,7 +4,6 @@
 <PageTitle>Ibasho - 検索</PageTitle>
 
 <div class="space-y-4">
-    <header class="text-center py-4 text-xl font-bold text-sky-500 border-b bg-white/80 backdrop-blur-sm sticky top-0">Ibasho</header>
     <div class="p-4">
         <h1 class="text-2xl font-bold text-gray-800">探す</h1>
         <div class="relative mt-4">
@@ -19,7 +18,7 @@
         </div>
         <div id="search-content-users" class="space-y-3 mt-4">
             <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm flex items-center space-x-4">
-                <img class="w-12 h-12 rounded-full cursor-pointer" onclick="showContent('user-profile')" src="https://placehold.co/100x100/E2E8F0/4A5568?text=User" alt="User Avatar">
+                <img class="w-12 h-12 rounded-full cursor-pointer" onclick="event.preventDefault(); location.href = '/profile';" src="https://placehold.co/100x100/E2E8F0/4A5568?text=User" alt="User Avatar">
                 <div class="flex-1">
                     <p class="font-bold">ユーザー名１</p>
                     <p class="text-sm text-gray-500">簡単な自己紹介文がここに入ります。</p>
