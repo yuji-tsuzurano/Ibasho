@@ -21,3 +21,8 @@ publish/
 # Blazor specific
 obj/Debug/net8.0/scopedcss/bundle/
 obj/Debug/net8.0/scopedcss/projectbundle/
+
+# Local override settings (not for source control)
+appsettings.Local.json
+
+# (dotnet user-secrets is stored outside repo, so no ignore needed here)
