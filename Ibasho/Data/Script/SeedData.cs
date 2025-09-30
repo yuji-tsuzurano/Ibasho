@@ -267,7 +267,7 @@ namespace Ibasho.Data.Script
                 new Notification
                 {
                     UserId = users[0].Id,
-                    ActorUserId = users[3].Id,
+                    ActorUserId = users[1].Id,
                     Type = NotificationType.Reply,
                     Message = "居場所SNSへようこそ！",
                     IsRead = false,
@@ -276,7 +276,7 @@ namespace Ibasho.Data.Script
                 new Notification
                 {
                     UserId = users[0].Id,
-                    ActorUserId = users[4].Id,
+                    ActorUserId = users[2].Id,
                     Type = NotificationType.Mention,
                     Message = "居場所SNSへようこそ！",
                     IsRead = false,
