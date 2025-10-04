@@ -3,8 +3,17 @@ using Ibasho.Components.Account;
 using Ibasho.Data;
 using Ibasho.Data.Script;
 using Microsoft.AspNetCore.Components.Authorization;
+using Ibasho.Domain.Repositories;
+using Ibasho.Infrastructure.Data.Repositories;
+using Ibasho.Application.UseCases.Posts;
+using Ibasho.Application.UseCases.Likes;
+using Ibasho.Application.UseCases.Replies;
+using Ibasho.Application.UseCases.Profiles;
+using Ibasho.Application.UseCases.Follows;
+using Ibasho.Application.UseCases.Notifications;
+using Ibasho.Application.UseCases.Search;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;    
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +48,30 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
+// ドメイン契約に対するEF実装のDI登録
+builder.Services.AddScoped<IPostRepository, PostRepository>();
+builder.Services.AddScoped<IPostSearchRepository, PostSearchRepository>();
+builder.Services.AddScoped<IPostLikeRepository, PostLikeRepository>();
+builder.Services.AddScoped<IFollowRepository, FollowRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserProfileQueryRepository, UserProfileQueryRepository>();
+
+// ユースケースのDI登録
+builder.Services.AddScoped<GetHomeTimelineUseCase>();
+builder.Services.AddScoped<CreatePostUseCase>();
+builder.Services.AddScoped<SearchPostsUseCase>();
+builder.Services.AddScoped<ToggleLikeUseCase>();
+builder.Services.AddScoped<GetThreadUseCase>();
+builder.Services.AddScoped<CreateReplyUseCase>();
+builder.Services.AddScoped<GetUserProfileUseCase>();
+builder.Services.AddScoped<GetUserPostsUseCase>();
+builder.Services.AddScoped<GetUserLikesUseCase>();
+builder.Services.AddScoped<ToggleFollowUseCase>();
+builder.Services.AddScoped<GetNotificationsUseCase>();
+builder.Services.AddScoped<MarkAllNotificationsReadUseCase>();
+builder.Services.AddScoped<SearchUsersUseCase>();
 
 var app = builder.Build();
 
