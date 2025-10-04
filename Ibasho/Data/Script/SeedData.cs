@@ -53,7 +53,7 @@ namespace Ibasho.Data.Script
                 var userNumber = i + 1;
                 var user = new ApplicationUser
                 {
-                    UserName = $"testuser{userNumber}",
+                    UserName = $"testuser{userNumber}@example.com",
                     Email = $"testuser{userNumber}@example.com",
                     DisplayName = $"テストユーザー{userNumber}",
                     Bio = $"テストユーザー{userNumber}です。よろしくお願いします。",
