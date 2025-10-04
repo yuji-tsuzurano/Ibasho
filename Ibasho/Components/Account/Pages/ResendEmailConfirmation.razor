@@ -37,7 +37,7 @@
     private string? message;
 
     [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = new();
+    private Ibasho.Application.DTOs.Account.ResendEmailConfirmationInputDto Input { get; set; } = new();
 
     private async Task OnValidSubmitAsync()
     {
@@ -59,10 +59,5 @@
         message = "Verification email sent. Please check your email.";
     }
 
-    private sealed class InputModel
-    {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; } = "";
-    }
+    // Input model moved to DTOs: Ibasho.Application.DTOs.Account.ResendEmailConfirmationInputDto
 }

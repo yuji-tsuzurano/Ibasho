@@ -38,7 +38,7 @@
     private ApplicationUser user = default!;
 
     [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = new();
+    private Ibasho.Application.DTOs.Account.LoginWithRecoveryCodeInputDto Input { get; set; } = new();
 
     [SupplyParameterFromQuery]
     private string? ReturnUrl { get; set; }
@@ -75,11 +75,5 @@
         }
     }
 
-    private sealed class InputModel
-    {
-        [Required]
-        [DataType(DataType.Text)]
-        [Display(Name = "Recovery Code")]
-        public string RecoveryCode { get; set; } = "";
-    }
+    // Input model moved to DTOs: Ibasho.Application.DTOs.Account.LoginWithRecoveryCodeInputDto
 }

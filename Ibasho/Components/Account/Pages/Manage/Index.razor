@@ -42,7 +42,7 @@
     private HttpContext HttpContext { get; set; } = default!;
 
     [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = new();
+    private Ibasho.Application.DTOs.Account.ManageProfileInputDto Input { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -68,10 +68,5 @@
         RedirectManager.RedirectToCurrentPageWithStatus("Your profile has been updated", HttpContext);
     }
 
-    private sealed class InputModel
-    {
-        [Phone]
-        [Display(Name = "Phone number")]
-        public string? PhoneNumber { get; set; }
-    }
+    // Input model moved to DTOs: Ibasho.Application.DTOs.Account.ManageProfileInputDto
 }

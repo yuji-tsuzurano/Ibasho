@@ -54,7 +54,7 @@
     private HttpContext HttpContext { get; set; } = default!;
 
     [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = new();
+    private Ibasho.Application.DTOs.Account.ExternalLoginInputDto Input { get; set; } = new();
 
     [SupplyParameterFromQuery]
     private string? RemoteError { get; set; }
@@ -186,10 +186,5 @@
         return (IUserEmailStore<ApplicationUser>)UserStore;
     }
 
-    private sealed class InputModel
-    {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; } = "";
-    }
+    // Input model moved to DTOs: Ibasho.Application.DTOs.Account.ExternalLoginInputDto
 }

@@ -79,7 +79,7 @@ else
     private HttpContext HttpContext { get; set; } = default!;
 
     [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = new();
+    private Ibasho.Application.DTOs.Account.EnableAuthenticatorInputDto Input { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -161,12 +161,5 @@ else
             unformattedKey);
     }
 
-    private sealed class InputModel
-    {
-        [Required]
-        [StringLength(7, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-        [DataType(DataType.Text)]
-        [Display(Name = "Verification Code")]
-        public string Code { get; set; } = "";
-    }
+    // Input model moved to DTOs: Ibasho.Application.DTOs.Account.EnableAuthenticatorInputDto
 }

@@ -63,7 +63,7 @@
     private HttpContext HttpContext { get; set; } = default!;
 
     [SupplyParameterFromForm(FormName = "change-email")]
-    private InputModel Input { get; set; } = new();
+    private Ibasho.Application.DTOs.Account.ManageEmailInputDto Input { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -113,11 +113,5 @@
         message = "Verification email sent. Please check your email.";
     }
 
-    private sealed class InputModel
-    {
-        [Required]
-        [EmailAddress]
-        [Display(Name = "New email")]
-        public string? NewEmail { get; set; }
-    }
+    // Input model moved to DTOs: Ibasho.Application.DTOs.Account.ManageEmailInputDto
 }
