@@ -1,9 +1,9 @@
-using Ibasho.Data.Entities;
-using Ibasho.Data.Enums;
+using Ibasho.Domain.Entities;
+using Ibasho.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Ibasho.Data.Script
+namespace Ibasho.Infrastructure.Data.Seeding
 {
     /// <summary>
     /// データベースの初期データを作成するクラス

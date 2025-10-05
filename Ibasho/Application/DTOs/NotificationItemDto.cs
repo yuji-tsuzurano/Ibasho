@@ -1,4 +1,4 @@
-using Ibasho.Data.Enums;
+using Ibasho.Domain.Enums;
 
 namespace Ibasho.Application.DTOs;
 

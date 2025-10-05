@@ -1,4 +1,4 @@
-using Ibasho.Data.Entities;
+using Ibasho.Domain.Entities;
 using Ibasho.Domain.Repositories;
 
 namespace Ibasho.Application.UseCases.Replies;

@@ -1,4 +1,4 @@
-namespace Ibasho.Data.Enums
+namespace Ibasho.Domain.Enums
 {
     /// <summary>
     /// 通知の種類を表す列挙型

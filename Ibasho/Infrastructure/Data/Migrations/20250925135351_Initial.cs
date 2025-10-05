@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Ibasho.Data.Migrations
+namespace Ibasho.Domain.Entities.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration

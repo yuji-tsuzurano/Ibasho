@@ -1,4 +1,3 @@
-using Ibasho.Data;
 using Ibasho.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 

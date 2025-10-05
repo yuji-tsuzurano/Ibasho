@@ -1,9 +1,9 @@
-using Ibasho.Data.Entities;
+using Ibasho.Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace Ibasho.Data
+namespace Ibasho.Infrastructure.Data
 {
     /// <summary>
     /// アプリケーションのデータベースコンテキスト
@@ -15,17 +15,17 @@ namespace Ibasho.Data
         /// 投稿エンティティのDbSet
         /// </summary>
         public DbSet<Post> Posts { get; set; }
-        
+
         /// <summary>
         /// 投稿いいねエンティティのDbSet
         /// </summary>
         public DbSet<PostLike> PostLikes { get; set; }
-        
+
         /// <summary>
         /// フォロー関係エンティティのDbSet
         /// </summary>
         public DbSet<Follow> Follows { get; set; }
-        
+
         /// <summary>
         /// 通知エンティティのDbSet
         /// </summary>
@@ -45,7 +45,7 @@ namespace Ibasho.Data
             ConfigurePostLike(builder);
             ConfigureFollow(builder);
             ConfigureNotification(builder);
-            
+
             ApplyPostgresSnakeCaseConventions(builder);
         }
 

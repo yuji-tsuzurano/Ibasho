@@ -1,6 +1,6 @@
 using Ibasho.Components.Account.Pages;
 using Ibasho.Components.Account.Pages.Manage;
-using Ibasho.Data;
+using Ibasho.Domain.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;

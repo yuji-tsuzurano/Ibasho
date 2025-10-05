@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using Ibasho.Data.Enums;
+using Ibasho.Domain.Enums;
 
-namespace Ibasho.Data.Entities
+namespace Ibasho.Domain.Entities
 {
     /// <summary>
     /// 通知エンティティ
@@ -13,41 +13,41 @@ namespace Ibasho.Data.Entities
         /// 通知ID（主キー）
         /// </summary>
         public long Id { get; set; }
-        
+
         /// <summary>
         /// 通知を受け取るユーザーID
         /// </summary>
         [Required]
         public string UserId { get; set; } = string.Empty;
-        
+
         /// <summary>
         /// 通知の原因となる行動をしたユーザーID
         /// </summary>
         [Required]
         public string ActorUserId { get; set; } = string.Empty;
-        
+
         /// <summary>
         /// 通知の種類
         /// </summary>
         [Required]
         public NotificationType Type { get; set; }
-        
+
         /// <summary>
         /// 関連する投稿ID（いいねやリプライの場合）
         /// </summary>
         public long? PostId { get; set; }
-        
+
         /// <summary>
         /// 通知メッセージ（最大500文字）
         /// </summary>
         [MaxLength(500)]
         public string? Message { get; set; }
-        
+
         /// <summary>
         /// 既読フラグ
         /// </summary>
         public bool IsRead { get; set; } = false;
-        
+
         /// <summary>
         /// 通知作成日時
         /// </summary>
@@ -58,12 +58,12 @@ namespace Ibasho.Data.Entities
         /// 通知を受け取るユーザー
         /// </summary>
         public ApplicationUser User { get; set; } = null!;
-        
+
         /// <summary>
         /// 通知の原因となる行動をしたユーザー
         /// </summary>
         public ApplicationUser ActorUser { get; set; } = null!;
-        
+
         /// <summary>
         /// 関連する投稿
         /// </summary>

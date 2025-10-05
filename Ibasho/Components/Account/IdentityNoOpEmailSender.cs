@@ -1,4 +1,4 @@
-using Ibasho.Data;
+using Ibasho.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 

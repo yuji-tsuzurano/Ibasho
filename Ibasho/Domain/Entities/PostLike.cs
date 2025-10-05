@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Ibasho.Data.Entities
+namespace Ibasho.Domain.Entities
 {
     /// <summary>
     /// 投稿いいねエンティティ
@@ -12,19 +12,19 @@ namespace Ibasho.Data.Entities
         /// いいねID（主キー）
         /// </summary>
         public long Id { get; set; }
-        
+
         /// <summary>
         /// いいね対象の投稿ID
         /// </summary>
         [Required]
         public long PostId { get; set; }
-        
+
         /// <summary>
         /// いいねしたユーザーID
         /// </summary>
         [Required]
         public string UserId { get; set; } = string.Empty;
-        
+
         /// <summary>
         /// いいね作成日時
         /// </summary>
@@ -35,7 +35,7 @@ namespace Ibasho.Data.Entities
         /// いいね対象の投稿
         /// </summary>
         public Post Post { get; set; } = null!;
-        
+
         /// <summary>
         /// いいねしたユーザー
         /// </summary>

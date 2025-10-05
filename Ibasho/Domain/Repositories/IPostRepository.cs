@@ -1,5 +1,5 @@
 using Ibasho.Application.DTOs;
-using Ibasho.Data.Entities;
+using Ibasho.Domain.Entities;
 
 namespace Ibasho.Domain.Repositories;
 
