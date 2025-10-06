@@ -1,4 +1,5 @@
 ﻿@page "/home"
+@inject Ibasho.Application.UseCases.Posts.GetHomeTimelineUseCase HomeTimelineUseCase
 
 <PageTitle>Ibasho - ホーム</PageTitle>
 
@@ -10,29 +11,41 @@
                 <button class="px-5 py-2 text-sm font-semibold text-white bg-sky-500 rounded-full hover:bg-sky-600 transition-colors duration-300">投稿する</button>
             </div>
         </div>
-        <div class="space-y-4 mt-4">
-            <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
-                <div class="flex items-start space-x-3">
-                    <img class="w-12 h-12 rounded-full cursor-pointer" onclick="event.preventDefault(); location.href = '/profile';" src="https://placehold.co/100x100/E2E8F0/4A5568?text=User" alt="User Avatar">
-                    <div class="flex-1">
-                        <div class="flex items-center space-x-2">
-                            <span class="font-bold cursor-pointer" onclick="showContent('user-profile')">ユーザー名１</span>
-                            <span class="text-sm text-gray-500">@("@user1 · 5分前")</span>
-                        </div>
-                        <p class="mt-1">Tailwind CSSを使ってSNSのUIを作るの、楽しい！ライトブルーがいい感じ。</p>
-                        <div class="flex items-center justify-between mt-4 text-gray-500">
-                            <button onclick="event.preventDefault(); location.href = '/reply';" class="flex items-center space-x-1 hover:text-sky-500">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                                <span class="text-sm">12</span>
-                            </button>
-                            <button class="flex items-center space-x-1 text-pink-500">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
-                                <span class="text-sm font-semibold">58</span>
-                            </button>
+        <div class="space-y-3 mt-4">
+            @if (posts != null)
+            {
+                @foreach (var post in posts)
+                {
+                    <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
+                        <div class="flex items-start space-x-3">
+                            <NavLink href="@Profile.Path">
+                                <img class="w-12 h-12 rounded-full cursor-pointer" src="./Image/default-user.png" alt="User Avatar">
+                            </NavLink>
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2">
+                                    <span class="font-bold cursor-pointer">@post.UserDisplayName</span>
+                                    <span class="text-sm text-gray-500">@post.CreatedAt.ToString("yyyy/MM/dd HH:mm:ss")</span>
+                                </div>
+                                <p class="mt-1">@post.Content</p>
+                                <div class="flex items-center justify-between mt-4 text-gray-500">
+                                    <NavLink class="flex items-center space-x-1 hover:text-sky-500" href="@Reply.Path">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                                        <span class="text-sm">@post.ReplyCount</span>
+                                    </NavLink>
+                                    <button class="flex items-center space-x-1 text-gray-500">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
+                                        <span class="text-sm font-semibold">@post.LikeCount</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                }
+            }
+            else
+            {
+                <div>投稿がありません</div>
+            }
         </div>
     </div>
 </div>
@@ -40,4 +53,23 @@
 @code {
     // パス
     public static string Path = "/home";
+
+    // 投稿一覧情報
+    private IReadOnlyList<PostListItemDto>? posts;
+
+    /// <summary>
+    /// 初期起動時
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        string? userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
+        if (!string.IsNullOrEmpty(userId))
+        {
+            posts = await HomeTimelineUseCase.ExecuteAsync(userId);
+        }
+        else
+        {
+            posts = new List<PostListItemDto>();
+        }
+    }
 }

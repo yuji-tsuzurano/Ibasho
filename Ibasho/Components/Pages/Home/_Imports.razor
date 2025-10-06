@@ -1,2 +1,8 @@
 ﻿@layout Ibasho.Components.Layout.MainLayout2
 @attribute [Microsoft.AspNetCore.Authorization.Authorize]
+
+@using Ibasho.Application.DTOs
+@using Ibasho.Components.Pages.Profile
+@using Ibasho.Application.Services.Auth
+
+@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider

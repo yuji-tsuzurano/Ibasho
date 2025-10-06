@@ -143,7 +143,7 @@ namespace Ibasho.Infrastructure.Data.Seeding
         /// <param name="userCount">ユーザー数（参考値）</param>
         private static async Task CreateFollowsAsync(ApplicationDbContext context, int userCount)
         {
-            List<ApplicationUser> users = await context.Users.OrderBy(u => u.CreatedAt).Take(3).ToListAsync();
+            List<ApplicationUser> users = await context.Users.OrderByDescending(u => u.CreatedAt).Take(3).ToListAsync();
 
             if (users.Count < 3)
             {
@@ -153,25 +153,40 @@ namespace Ibasho.Infrastructure.Data.Seeding
 
             List<Follow> follows =
             [
-                // テストユーザー1 → テストユーザー2
                 new Follow
                 {
                     FollowerId = users[0].Id,
                     FolloweeId = users[1].Id,
                     CreatedAt = DateTime.UtcNow.AddDays(-1)
                 },
-                // テストユーザー2 → テストユーザー3
+                new Follow
+                {
+                    FollowerId = users[0].Id,
+                    FolloweeId = users[2].Id,
+                    CreatedAt = DateTime.UtcNow.AddDays(-1)
+                },
+                new Follow
+                {
+                    FollowerId = users[1].Id,
+                    FolloweeId = users[0].Id,
+                    CreatedAt = DateTime.UtcNow.AddDays(-2)
+                },
                 new Follow
                 {
                     FollowerId = users[1].Id,
                     FolloweeId = users[2].Id,
                     CreatedAt = DateTime.UtcNow.AddDays(-2)
                 },
-                // テストユーザー3 → テストユーザー1
                 new Follow
                 {
                     FollowerId = users[2].Id,
                     FolloweeId = users[0].Id,
+                    CreatedAt = DateTime.UtcNow.AddDays(-3)
+                },
+                new Follow
+                {
+                    FollowerId = users[2].Id,
+                    FolloweeId = users[1].Id,
                     CreatedAt = DateTime.UtcNow.AddDays(-3)
                 }
             ];
