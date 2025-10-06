@@ -20,12 +20,12 @@ public sealed class PostRepository(ApplicationDbContext db) : IPostRepository
     /// <returns>投稿一覧</returns>
     public async Task<IReadOnlyList<PostListItemDto>> GetHomeAsync(string currentUserId, int limit, CancellationToken ct = default)
     {
-        var followeeIds = db.Follows
+        IQueryable<string> followeeIds = db.Follows
             .AsNoTracking()
             .Where(f => f.FollowerId == currentUserId)
             .Select(f => f.FolloweeId);
 
-        var q = db.Posts.AsNoTracking()
+        IQueryable<PostListItemDto> q = db.Posts.AsNoTracking()
             .Where(p => p.ParentPostId == null && (p.UserId == currentUserId || followeeIds.Contains(p.UserId)))
             .OrderByDescending(p => p.CreatedAt)
             .Take(limit)
@@ -55,7 +55,7 @@ public sealed class PostRepository(ApplicationDbContext db) : IPostRepository
     /// <returns>親投稿、返信一覧</returns>
     public async Task<(PostListItemDto? Parent, IReadOnlyList<PostListItemDto> Thread)> GetThreadAsync(long rootPostId, string currentUserId, int limit, CancellationToken ct = default)
     {
-        var parent = await db.Posts.AsNoTracking()
+        PostListItemDto? parent = await db.Posts.AsNoTracking()
             .Where(p => p.Id == rootPostId)
             .Select(p => new PostListItemDto
             {
@@ -71,7 +71,7 @@ public sealed class PostRepository(ApplicationDbContext db) : IPostRepository
             })
             .FirstOrDefaultAsync(ct);
 
-        var thread = await db.Posts.AsNoTracking()
+        List<PostListItemDto> thread = await db.Posts.AsNoTracking()
             .Where(p => p.ParentPostId == rootPostId)
             .OrderBy(p => p.CreatedAt)
             .Take(limit)
@@ -102,7 +102,7 @@ public sealed class PostRepository(ApplicationDbContext db) : IPostRepository
     /// <returns>投稿一覧</returns>
     public Task<IReadOnlyList<PostListItemDto>> GetByUserAsync(string targetUserId, string currentUserId, int limit, CancellationToken ct = default)
     {
-        var q = db.Posts.AsNoTracking()
+        IQueryable<PostListItemDto> q = db.Posts.AsNoTracking()
             .Where(p => p.ParentPostId == null && p.UserId == targetUserId)
             .OrderByDescending(p => p.CreatedAt)
             .Take(limit)
@@ -132,7 +132,7 @@ public sealed class PostRepository(ApplicationDbContext db) : IPostRepository
     /// <returns>投稿一覧</returns>
     public Task<IReadOnlyList<PostListItemDto>> GetLikedByUserAsync(string targetUserId, string currentUserId, int limit, CancellationToken ct = default)
     {
-        var q = db.PostLikes.AsNoTracking()
+        IQueryable<PostListItemDto> q = db.PostLikes.AsNoTracking()
             .Where(l => l.UserId == targetUserId)
             .OrderByDescending(l => l.CreatedAt)
             .Select(l => l.Post)
@@ -163,8 +163,8 @@ public sealed class PostRepository(ApplicationDbContext db) : IPostRepository
     /// <returns>保存された投稿エンティティ</returns>
     public async Task<Post> CreateAsync(Post post, CancellationToken ct = default)
     {
-        db.Posts.Add(post);
-        await db.SaveChangesAsync(ct);
+        _ = db.Posts.Add(post);
+        _ = await db.SaveChangesAsync(ct);
         return post;
     }
 
@@ -176,8 +176,8 @@ public sealed class PostRepository(ApplicationDbContext db) : IPostRepository
     /// <returns>保存された返信エンティティ</returns>
     public async Task<Post> CreateReplyAsync(Post reply, CancellationToken ct = default)
     {
-        db.Posts.Add(reply);
-        await db.SaveChangesAsync(ct);
+        _ = db.Posts.Add(reply);
+        _ = await db.SaveChangesAsync(ct);
         return reply;
     }
 }

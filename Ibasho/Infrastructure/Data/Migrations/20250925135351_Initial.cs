@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -12,7 +11,7 @@ namespace Ibasho.Domain.Entities.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "asp_net_roles",
                 columns: table => new
                 {
@@ -23,10 +22,10 @@ namespace Ibasho.Domain.Entities.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_asp_net_roles", x => x.id);
+                    _ = table.PrimaryKey("pk_asp_net_roles", x => x.id);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "asp_net_users",
                 columns: table => new
                 {
@@ -54,10 +53,10 @@ namespace Ibasho.Domain.Entities.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_asp_net_users", x => x.id);
+                    _ = table.PrimaryKey("pk_asp_net_users", x => x.id);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "asp_net_role_claims",
                 columns: table => new
                 {
@@ -69,8 +68,8 @@ namespace Ibasho.Domain.Entities.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_asp_net_role_claims", x => x.id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("pk_asp_net_role_claims", x => x.id);
+                    _ = table.ForeignKey(
                         name: "fk_asp_net_role_claims_asp_net_roles_role_id",
                         column: x => x.role_id,
                         principalTable: "asp_net_roles",
@@ -78,7 +77,7 @@ namespace Ibasho.Domain.Entities.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "asp_net_user_claims",
                 columns: table => new
                 {
@@ -90,8 +89,8 @@ namespace Ibasho.Domain.Entities.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_asp_net_user_claims", x => x.id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("pk_asp_net_user_claims", x => x.id);
+                    _ = table.ForeignKey(
                         name: "fk_asp_net_user_claims_asp_net_users_user_id",
                         column: x => x.user_id,
                         principalTable: "asp_net_users",
@@ -99,7 +98,7 @@ namespace Ibasho.Domain.Entities.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "asp_net_user_logins",
                 columns: table => new
                 {
@@ -110,8 +109,8 @@ namespace Ibasho.Domain.Entities.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_asp_net_user_logins", x => new { x.login_provider, x.provider_key });
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("pk_asp_net_user_logins", x => new { x.login_provider, x.provider_key });
+                    _ = table.ForeignKey(
                         name: "fk_asp_net_user_logins_asp_net_users_user_id",
                         column: x => x.user_id,
                         principalTable: "asp_net_users",
@@ -119,7 +118,7 @@ namespace Ibasho.Domain.Entities.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "asp_net_user_roles",
                 columns: table => new
                 {
@@ -128,14 +127,14 @@ namespace Ibasho.Domain.Entities.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_asp_net_user_roles", x => new { x.user_id, x.role_id });
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("pk_asp_net_user_roles", x => new { x.user_id, x.role_id });
+                    _ = table.ForeignKey(
                         name: "fk_asp_net_user_roles_asp_net_roles_role_id",
                         column: x => x.role_id,
                         principalTable: "asp_net_roles",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "fk_asp_net_user_roles_asp_net_users_user_id",
                         column: x => x.user_id,
                         principalTable: "asp_net_users",
@@ -143,7 +142,7 @@ namespace Ibasho.Domain.Entities.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "asp_net_user_tokens",
                 columns: table => new
                 {
@@ -154,8 +153,8 @@ namespace Ibasho.Domain.Entities.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_asp_net_user_tokens", x => new { x.user_id, x.login_provider, x.name });
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("pk_asp_net_user_tokens", x => new { x.user_id, x.login_provider, x.name });
+                    _ = table.ForeignKey(
                         name: "fk_asp_net_user_tokens_asp_net_users_user_id",
                         column: x => x.user_id,
                         principalTable: "asp_net_users",
@@ -163,7 +162,7 @@ namespace Ibasho.Domain.Entities.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "follows",
                 columns: table => new
                 {
@@ -175,14 +174,14 @@ namespace Ibasho.Domain.Entities.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_follows", x => x.id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("pk_follows", x => x.id);
+                    _ = table.ForeignKey(
                         name: "fk_follows_asp_net_users_followee_id",
                         column: x => x.followee_id,
                         principalTable: "asp_net_users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "fk_follows_asp_net_users_follower_id",
                         column: x => x.follower_id,
                         principalTable: "asp_net_users",
@@ -190,7 +189,7 @@ namespace Ibasho.Domain.Entities.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "posts",
                 columns: table => new
                 {
@@ -205,14 +204,14 @@ namespace Ibasho.Domain.Entities.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_posts", x => x.id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("pk_posts", x => x.id);
+                    _ = table.ForeignKey(
                         name: "fk_posts_asp_net_users_user_id",
                         column: x => x.user_id,
                         principalTable: "asp_net_users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "fk_posts_posts_parent_post_id",
                         column: x => x.parent_post_id,
                         principalTable: "posts",
@@ -220,7 +219,7 @@ namespace Ibasho.Domain.Entities.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "notifications",
                 columns: table => new
                 {
@@ -236,20 +235,20 @@ namespace Ibasho.Domain.Entities.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_notifications", x => x.id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("pk_notifications", x => x.id);
+                    _ = table.ForeignKey(
                         name: "fk_notifications_asp_net_users_actor_user_id",
                         column: x => x.actor_user_id,
                         principalTable: "asp_net_users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "fk_notifications_asp_net_users_user_id",
                         column: x => x.user_id,
                         principalTable: "asp_net_users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "fk_notifications_posts_post_id",
                         column: x => x.post_id,
                         principalTable: "posts",
@@ -257,7 +256,7 @@ namespace Ibasho.Domain.Entities.Migrations
                         onDelete: ReferentialAction.SetNull);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "post_likes",
                 columns: table => new
                 {
@@ -269,14 +268,14 @@ namespace Ibasho.Domain.Entities.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_post_likes", x => x.id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("pk_post_likes", x => x.id);
+                    _ = table.ForeignKey(
                         name: "fk_post_likes_asp_net_users_user_id",
                         column: x => x.user_id,
                         principalTable: "asp_net_users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "fk_post_likes_posts_post_id",
                         column: x => x.post_id,
                         principalTable: "posts",
@@ -284,131 +283,131 @@ namespace Ibasho.Domain.Entities.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ix_asp_net_role_claims_role_id",
                 table: "asp_net_role_claims",
                 column: "role_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ux_asp_net_roles_normalized_name",
                 table: "asp_net_roles",
                 column: "normalized_name",
                 unique: true);
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ix_asp_net_user_claims_user_id",
                 table: "asp_net_user_claims",
                 column: "user_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ix_asp_net_user_logins_user_id",
                 table: "asp_net_user_logins",
                 column: "user_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ix_asp_net_user_roles_role_id",
                 table: "asp_net_user_roles",
                 column: "role_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ix_asp_net_users_created_at",
                 table: "asp_net_users",
                 column: "created_at");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ix_asp_net_users_display_name",
                 table: "asp_net_users",
                 column: "display_name");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ix_asp_net_users_normalized_email",
                 table: "asp_net_users",
                 column: "normalized_email");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ux_asp_net_users_normalized_user_name",
                 table: "asp_net_users",
                 column: "normalized_user_name",
                 unique: true);
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ix_follows_followee_id",
                 table: "follows",
                 column: "followee_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ix_follows_follower_id",
                 table: "follows",
                 column: "follower_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ux_follows_follower_id_followee_id",
                 table: "follows",
                 columns: new[] { "follower_id", "followee_id" },
                 unique: true);
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ix_notifications_actor_user_id",
                 table: "notifications",
                 column: "actor_user_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ix_notifications_post_id",
                 table: "notifications",
                 column: "post_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ix_notifications_user_id",
                 table: "notifications",
                 column: "user_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ix_notifications_user_id_created_at",
                 table: "notifications",
                 columns: new[] { "user_id", "created_at" });
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ix_notifications_user_id_is_read_created_at",
                 table: "notifications",
                 columns: new[] { "user_id", "is_read", "created_at" });
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ix_post_likes_post_id",
                 table: "post_likes",
                 column: "post_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ix_post_likes_user_id",
                 table: "post_likes",
                 column: "user_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ix_post_likes_user_id_created_at",
                 table: "post_likes",
                 columns: new[] { "user_id", "created_at" });
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ux_post_likes_post_id_user_id",
                 table: "post_likes",
                 columns: new[] { "post_id", "user_id" },
                 unique: true);
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ix_posts_created_at",
                 table: "posts",
                 column: "created_at");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ix_posts_parent_post_id",
                 table: "posts",
                 column: "parent_post_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ix_posts_user_id",
                 table: "posts",
                 column: "user_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "ix_posts_user_id_created_at",
                 table: "posts",
                 columns: new[] { "user_id", "created_at" });
@@ -417,37 +416,37 @@ namespace Ibasho.Domain.Entities.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "asp_net_role_claims");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "asp_net_user_claims");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "asp_net_user_logins");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "asp_net_user_roles");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "asp_net_user_tokens");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "follows");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "notifications");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "post_likes");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "asp_net_roles");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "posts");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "asp_net_users");
         }
     }

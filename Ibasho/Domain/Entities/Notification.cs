@@ -1,5 +1,5 @@
-using System.ComponentModel.DataAnnotations;
 using Ibasho.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Ibasho.Domain.Entities
 {

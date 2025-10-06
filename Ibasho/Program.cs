@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // ローカル専用設定 (非公開) を追加読み込み: appsettings.Local.json (存在する場合のみ)
 builder.Configuration
@@ -38,7 +38,7 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -74,23 +74,23 @@ builder.Services.AddScoped<GetNotificationsUseCase>();
 builder.Services.AddScoped<MarkAllNotificationsReadUseCase>();
 builder.Services.AddScoped<SearchUsersUseCase>();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // ========================================
 // テストデータ作成処理（appsettings.jsonで制御）
 // ========================================
-var enableSeedData = builder.Configuration.GetValue<bool>("SeedData:EnableSeedData");
-var userCount = builder.Configuration.GetValue<int>("SeedData:UserCount", 10);
-var postCount = builder.Configuration.GetValue<int>("SeedData:PostCount", 50);
+bool enableSeedData = builder.Configuration.GetValue<bool>("SeedData:EnableSeedData");
+int userCount = builder.Configuration.GetValue<int>("SeedData:UserCount", 10);
+int postCount = builder.Configuration.GetValue<int>("SeedData:PostCount", 50);
 
 if (enableSeedData)
 {
     Console.WriteLine("=== テストデータ作成モード ===");
     Console.WriteLine($"設定: ユーザー数={userCount}, 投稿数={postCount}");
-    
+
     try
     {
-        using var scope = app.Services.CreateScope();
+        using IServiceScope scope = app.Services.CreateScope();
         await SeedData.InitializeAsync(scope.ServiceProvider, userCount, postCount);
         Console.WriteLine("✅ テストデータの作成が完了しました！");
         Console.WriteLine("📝 appsettings.jsonのSeedData:EnableSeedDataをfalseに戻すことを忘れずに。");
@@ -103,7 +103,7 @@ if (enableSeedData)
             Console.WriteLine($"詳細: {ex.InnerException.Message}");
         }
     }
-    
+
     Console.WriteLine("テストデータ作成処理を終了します。");
     return; // アプリケーションを終了
 }
@@ -115,13 +115,13 @@ if (enableSeedData)
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseMigrationsEndPoint();
+    _ = app.UseMigrationsEndPoint();
 }
 else
 {
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    _ = app.UseExceptionHandler("/Error", createScopeForErrors: true);
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    _ = app.UseHsts();
 }
 
 app.UseHttpsRedirection();

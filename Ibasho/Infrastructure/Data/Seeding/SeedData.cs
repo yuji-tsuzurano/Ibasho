@@ -18,10 +18,10 @@ namespace Ibasho.Infrastructure.Data.Seeding
         /// <param name="postCount">作成する投稿数</param>
         public static async Task InitializeAsync(IServiceProvider serviceProvider, int userCount = 10, int postCount = 50)
         {
-            using var context = new ApplicationDbContext(
+            using ApplicationDbContext context = new(
                 serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>());
-            
-            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+            UserManager<ApplicationUser> userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
             // 既存データを削除
             await ClearAllDataAsync(context);
@@ -45,13 +45,13 @@ namespace Ibasho.Infrastructure.Data.Seeding
         /// <param name="userCount">作成するユーザー数</param>
         private static async Task CreateUsersAsync(UserManager<ApplicationUser> userManager, ApplicationDbContext context, int userCount)
         {
-            var users = new List<ApplicationUser>();
+            List<ApplicationUser> users = [];
 
             // 全てのユーザーを統一的に作成
             for (int i = 0; i < userCount; i++)
             {
-                var userNumber = i + 1;
-                var user = new ApplicationUser
+                int userNumber = i + 1;
+                ApplicationUser user = new()
                 {
                     UserName = $"testuser{userNumber}@example.com",
                     Email = $"testuser{userNumber}@example.com",
@@ -62,17 +62,17 @@ namespace Ibasho.Infrastructure.Data.Seeding
                     CreatedAt = DateTime.UtcNow.AddDays(-(i + 1)) // 1日間隔で作成
                 };
 
-                var result = await userManager.CreateAsync(user, "TestPass123!");
+                IdentityResult result = await userManager.CreateAsync(user, "TestPass123!");
                 if (!result.Succeeded)
                 {
                     throw new InvalidOperationException($"ユーザー作成に失敗しました: {string.Join(", ", result.Errors.Select(e => e.Description))}");
                 }
-                
+
                 users.Add(user);
                 Console.WriteLine($"ユーザー作成: {user.DisplayName} ({user.UserName})");
             }
 
-            await context.SaveChangesAsync();
+            _ = await context.SaveChangesAsync();
             Console.WriteLine($"合計 {userCount} 人のユーザーを作成しました。");
         }
 
@@ -83,11 +83,11 @@ namespace Ibasho.Infrastructure.Data.Seeding
         /// <param name="postCount">作成する投稿数</param>
         private static async Task CreatePostsAsync(ApplicationDbContext context, int postCount)
         {
-            var users = await context.Users.OrderBy(u => u.CreatedAt).ToListAsync();
-            var posts = new List<Post>();
+            List<ApplicationUser> users = await context.Users.OrderBy(u => u.CreatedAt).ToListAsync();
+            List<Post> posts = [];
 
             // シンプルな投稿テキスト
-            var sampleTexts = new[]
+            string[] sampleTexts = new[]
             {
                 "今日はいい天気ですね！",
                 "プログラミング勉強中です。",
@@ -117,22 +117,22 @@ namespace Ibasho.Infrastructure.Data.Seeding
             // 投稿を作成
             for (int i = 0; i < postCount; i++)
             {
-                var userIndex = i % users.Count; // ユーザーを順番に使う
-                var textIndex = i % sampleTexts.Length; // テキストを順番に使う
-                
-                var post = new Post
+                int userIndex = i % users.Count; // ユーザーを順番に使う
+                int textIndex = i % sampleTexts.Length; // テキストを順番に使う
+
+                Post post = new()
                 {
                     UserId = users[userIndex].Id,
                     Content = $"{sampleTexts[textIndex]} #{i + 1:D3}",
                     CreatedAt = DateTime.UtcNow.AddDays(-i), // 1日ずつ過去に
                     UpdatedAt = DateTime.UtcNow.AddDays(-i)
                 };
-                
+
                 posts.Add(post);
             }
-            
+
             context.Posts.AddRange(posts);
-            await context.SaveChangesAsync();
+            _ = await context.SaveChangesAsync();
             Console.WriteLine($"合計 {postCount} 件の投稿を作成しました。");
         }
 
@@ -143,16 +143,16 @@ namespace Ibasho.Infrastructure.Data.Seeding
         /// <param name="userCount">ユーザー数（参考値）</param>
         private static async Task CreateFollowsAsync(ApplicationDbContext context, int userCount)
         {
-            var users = await context.Users.OrderBy(u => u.CreatedAt).Take(3).ToListAsync();
-            
+            List<ApplicationUser> users = await context.Users.OrderBy(u => u.CreatedAt).Take(3).ToListAsync();
+
             if (users.Count < 3)
             {
                 Console.WriteLine("フォロー関係を作成するには、少なくとも3人のユーザーが必要です。");
                 return;
             }
 
-            var follows = new List<Follow>
-            {
+            List<Follow> follows =
+            [
                 // テストユーザー1 → テストユーザー2
                 new Follow
                 {
@@ -174,10 +174,10 @@ namespace Ibasho.Infrastructure.Data.Seeding
                     FolloweeId = users[0].Id,
                     CreatedAt = DateTime.UtcNow.AddDays(-3)
                 }
-            };
+            ];
 
             context.Follows.AddRange(follows);
-            await context.SaveChangesAsync();
+            _ = await context.SaveChangesAsync();
             Console.WriteLine($"合計 {follows.Count} 件のフォロー関係を作成しました。");
         }
 
@@ -188,17 +188,17 @@ namespace Ibasho.Infrastructure.Data.Seeding
         /// <param name="postCount">投稿数（参考値）</param>
         private static async Task CreatePostLikesAsync(ApplicationDbContext context, int postCount)
         {
-            var users = await context.Users.OrderBy(u => u.CreatedAt).Take(3).ToListAsync();
-            var posts = await context.Posts.Where(p => p.ParentPostId == null).OrderBy(p => p.CreatedAt).Take(3).ToListAsync();
-            
+            List<ApplicationUser> users = await context.Users.OrderBy(u => u.CreatedAt).Take(3).ToListAsync();
+            List<Post> posts = await context.Posts.Where(p => p.ParentPostId == null).OrderBy(p => p.CreatedAt).Take(3).ToListAsync();
+
             if (!posts.Any() || users.Count < 3)
             {
                 Console.WriteLine("いいねを作成するためのデータが不足しています。");
                 return;
             }
 
-            var postLikes = new List<PostLike>
-            {
+            List<PostLike> postLikes =
+            [
                 // テストユーザー2がテストユーザー1の投稿にいいね
                 new PostLike
                 {
@@ -220,10 +220,10 @@ namespace Ibasho.Infrastructure.Data.Seeding
                     UserId = users[0].Id,
                     CreatedAt = posts[2].CreatedAt.AddMinutes(60)
                 }
-            };
+            ];
 
             context.PostLikes.AddRange(postLikes);
-            await context.SaveChangesAsync();
+            _ = await context.SaveChangesAsync();
             Console.WriteLine($"合計 {postLikes.Count} 件のいいねを作成しました。");
         }
 
@@ -234,8 +234,8 @@ namespace Ibasho.Infrastructure.Data.Seeding
         /// <param name="userCount">ユーザー数（参考値）</param>
         private static async Task CreateNotificationsAsync(ApplicationDbContext context, int userCount)
         {
-            var users = await context.Users.OrderBy(u => u.CreatedAt).Take(3).ToListAsync();
-            var posts = await context.Posts.Where(p => p.ParentPostId == null).OrderBy(p => p.CreatedAt).Take(3).ToListAsync();
+            List<ApplicationUser> users = await context.Users.OrderBy(u => u.CreatedAt).Take(3).ToListAsync();
+            List<Post> posts = await context.Posts.Where(p => p.ParentPostId == null).OrderBy(p => p.CreatedAt).Take(3).ToListAsync();
 
             if (users.Count < 3)
             {
@@ -243,8 +243,8 @@ namespace Ibasho.Infrastructure.Data.Seeding
                 return;
             }
 
-            var notifications = new List<Notification>
-            {
+            List<Notification> notifications =
+            [
                 new Notification
                 {
                     UserId = users[0].Id,
@@ -282,10 +282,10 @@ namespace Ibasho.Infrastructure.Data.Seeding
                     IsRead = false,
                     CreatedAt = DateTime.UtcNow.AddMinutes(-30)
                 }
-            };
+            ];
 
             context.Notifications.AddRange(notifications);
-            await context.SaveChangesAsync();
+            _ = await context.SaveChangesAsync();
             Console.WriteLine($"合計 {notifications.Count} 件の通知を作成しました。");
         }
 
@@ -302,7 +302,7 @@ namespace Ibasho.Infrastructure.Data.Seeding
                 // 外部キー制約を考慮して、子テーブルから順番に削除
 
                 // 通知を削除
-                var notifications = await context.Notifications.ToListAsync();
+                List<Notification> notifications = await context.Notifications.ToListAsync();
                 if (notifications.Any())
                 {
                     context.Notifications.RemoveRange(notifications);
@@ -310,7 +310,7 @@ namespace Ibasho.Infrastructure.Data.Seeding
                 }
 
                 // いいねを削除
-                var postLikes = await context.PostLikes.ToListAsync();
+                List<PostLike> postLikes = await context.PostLikes.ToListAsync();
                 if (postLikes.Any())
                 {
                     context.PostLikes.RemoveRange(postLikes);
@@ -318,7 +318,7 @@ namespace Ibasho.Infrastructure.Data.Seeding
                 }
 
                 // フォロー関係を削除
-                var follows = await context.Follows.ToListAsync();
+                List<Follow> follows = await context.Follows.ToListAsync();
                 if (follows.Any())
                 {
                     context.Follows.RemoveRange(follows);
@@ -326,7 +326,7 @@ namespace Ibasho.Infrastructure.Data.Seeding
                 }
 
                 // 投稿を削除
-                var posts = await context.Posts.ToListAsync();
+                List<Post> posts = await context.Posts.ToListAsync();
                 if (posts.Any())
                 {
                     context.Posts.RemoveRange(posts);
@@ -334,7 +334,7 @@ namespace Ibasho.Infrastructure.Data.Seeding
                 }
 
                 // ユーザーを削除（AspNetUsersテーブル）
-                var users = await context.Users.ToListAsync();
+                List<ApplicationUser> users = await context.Users.ToListAsync();
                 if (users.Any())
                 {
                     context.Users.RemoveRange(users);
@@ -342,7 +342,7 @@ namespace Ibasho.Infrastructure.Data.Seeding
                 }
 
                 // 変更を保存
-                await context.SaveChangesAsync();
+                _ = await context.SaveChangesAsync();
                 Console.WriteLine("既存データの削除が完了しました。");
             }
             catch (Exception ex)

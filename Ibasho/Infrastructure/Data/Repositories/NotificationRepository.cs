@@ -19,7 +19,7 @@ public sealed class NotificationRepository(ApplicationDbContext db) : INotificat
     /// <returns>通知情報一覧</returns>
     public Task<IReadOnlyList<NotificationItemDto>> GetRecentAsync(string userId, int limit, CancellationToken ct = default)
     {
-        var q = db.Notifications.AsNoTracking()
+        IQueryable<NotificationItemDto> q = db.Notifications.AsNoTracking()
             .Where(n => n.UserId == userId)
             .OrderByDescending(n => n.CreatedAt)
             .Take(limit)

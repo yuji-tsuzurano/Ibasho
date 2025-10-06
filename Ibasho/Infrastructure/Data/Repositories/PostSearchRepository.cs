@@ -20,7 +20,7 @@ public sealed class PostSearchRepository(ApplicationDbContext db) : IPostSearchR
     /// <returns>投稿一覧</returns>
     public async Task<IReadOnlyList<PostListItemDto>> SearchAsync(string keyword, string currentUserId, int limit, CancellationToken ct = default)
     {
-        var q = db.Posts.AsNoTracking()
+        IQueryable<PostListItemDto> q = db.Posts.AsNoTracking()
             .Where(p => p.ParentPostId == null && p.Content.Contains(keyword))
             .OrderByDescending(p => p.CreatedAt)
             .Take(limit)

@@ -18,7 +18,7 @@ public sealed class UserRepository(ApplicationDbContext db) : IUserRepository
     /// <returns>プロフィール情報</returns>
     public async Task<ProfileInfoDto?> GetProfileAsync(string targetUserId, string currentUserId, CancellationToken ct = default)
     {
-        var user = await db.Users.AsNoTracking()
+        ProfileInfoDto? user = await db.Users.AsNoTracking()
             .Where(u => u.Id == targetUserId)
             .Select(u => new ProfileInfoDto
             {
@@ -48,7 +48,7 @@ public sealed class UserRepository(ApplicationDbContext db) : IUserRepository
     public Task<IReadOnlyList<UserListItemDto>> SearchUsersAsync(string keyword, string currentUserId, int limit, CancellationToken ct = default)
     {
         keyword = keyword.Trim();
-        var q = db.Users.AsNoTracking()
+        IQueryable<UserListItemDto> q = db.Users.AsNoTracking()
             .Where(u => EF.Functions.ILike(u.DisplayName, $"%{keyword}%") || EF.Functions.ILike(u.UserName!, $"%{keyword}%"))
             .OrderByDescending(u => u.CreatedAt)
             .Take(limit)

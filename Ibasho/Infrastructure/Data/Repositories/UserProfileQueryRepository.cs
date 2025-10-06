@@ -21,10 +21,10 @@ public sealed class UserProfileQueryRepository(ApplicationDbContext db) : IUserP
         string currentUserId,
         CancellationToken ct = default)
     {
-        var followingTask = db.Follows.AsNoTracking().CountAsync(f => f.FollowerId == targetUserId, ct);
-        var followersTask = db.Follows.AsNoTracking().CountAsync(f => f.FolloweeId == targetUserId, ct);
-        var postsTask = db.Posts.AsNoTracking().CountAsync(p => p.UserId == targetUserId && p.ParentPostId == null, ct);
-        var followedTask = db.Follows.AsNoTracking().AnyAsync(f => f.FollowerId == currentUserId && f.FolloweeId == targetUserId, ct);
+        Task<int> followingTask = db.Follows.AsNoTracking().CountAsync(f => f.FollowerId == targetUserId, ct);
+        Task<int> followersTask = db.Follows.AsNoTracking().CountAsync(f => f.FolloweeId == targetUserId, ct);
+        Task<int> postsTask = db.Posts.AsNoTracking().CountAsync(p => p.UserId == targetUserId && p.ParentPostId == null, ct);
+        Task<bool> followedTask = db.Follows.AsNoTracking().AnyAsync(f => f.FollowerId == currentUserId && f.FolloweeId == targetUserId, ct);
 
         await Task.WhenAll(followingTask, followersTask, postsTask, followedTask);
         return (followingTask.Result, followersTask.Result, postsTask.Result, followedTask.Result);

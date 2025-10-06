@@ -19,18 +19,18 @@ public sealed class FollowRepository(ApplicationDbContext db) : IFollowRepositor
     /// <returns>切替後のフォロー状態。true:フォロー中 false:未フォロー</returns>
     public async Task<bool> ToggleAsync(string followerId, string followeeId, CancellationToken ct = default)
     {
-        var rel = await db.Follows.FirstOrDefaultAsync(f => f.FollowerId == followerId && f.FolloweeId == followeeId, ct);
+        Follow? rel = await db.Follows.FirstOrDefaultAsync(f => f.FollowerId == followerId && f.FolloweeId == followeeId, ct);
         if (rel is not null)
         {
-            db.Follows.Remove(rel);
-            await db.SaveChangesAsync(ct);
+            _ = db.Follows.Remove(rel);
+            _ = await db.SaveChangesAsync(ct);
             return false;
         }
 
-        db.Follows.Add(new Follow { FollowerId = followerId, FolloweeId = followeeId, CreatedAt = DateTime.UtcNow });
+        _ = db.Follows.Add(new Follow { FollowerId = followerId, FolloweeId = followeeId, CreatedAt = DateTime.UtcNow });
         try
         {
-            await db.SaveChangesAsync(ct);
+            _ = await db.SaveChangesAsync(ct);
             return true;
         }
         catch (DbUpdateException)

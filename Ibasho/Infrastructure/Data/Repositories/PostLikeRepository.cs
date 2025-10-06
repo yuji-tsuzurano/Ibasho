@@ -19,18 +19,18 @@ public sealed class PostLikeRepository(ApplicationDbContext db) : IPostLikeRepos
     /// <returns>切替後のいいね状態（true:いいね false:未いいね）</returns>
     public async Task<bool> ToggleAsync(long postId, string userId, CancellationToken ct = default)
     {
-        var like = await db.PostLikes.FirstOrDefaultAsync(x => x.PostId == postId && x.UserId == userId, ct);
+        PostLike? like = await db.PostLikes.FirstOrDefaultAsync(x => x.PostId == postId && x.UserId == userId, ct);
         if (like is not null)
         {
-            db.PostLikes.Remove(like);
-            await db.SaveChangesAsync(ct);
+            _ = db.PostLikes.Remove(like);
+            _ = await db.SaveChangesAsync(ct);
             return false;
         }
 
-        db.PostLikes.Add(new PostLike { PostId = postId, UserId = userId, CreatedAt = DateTime.UtcNow });
+        _ = db.PostLikes.Add(new PostLike { PostId = postId, UserId = userId, CreatedAt = DateTime.UtcNow });
         try
         {
-            await db.SaveChangesAsync(ct);
+            _ = await db.SaveChangesAsync(ct);
             return true;
         }
         catch (DbUpdateException)
