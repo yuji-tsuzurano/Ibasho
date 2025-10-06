@@ -1,4 +1,4 @@
-﻿using Ibasho.Application.UseCases.Follows;
+using Ibasho.Application.UseCases.Follows;
 using Ibasho.Application.UseCases.Likes;
 using Ibasho.Application.UseCases.Notifications;
 using Ibasho.Application.UseCases.Posts;
@@ -7,6 +7,7 @@ using Ibasho.Application.UseCases.Replies;
 using Ibasho.Application.UseCases.Search;
 using Ibasho.Components;
 using Ibasho.Components.Account;
+using Ibasho.Components.Pages.Login;
 using Ibasho.Domain.Entities;
 using Ibasho.Domain.Repositories;
 using Ibasho.Infrastructure.Data;
@@ -49,6 +50,11 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = Login.Path;
+});
 
 // ドメイン契約に対するEF実装のDI登録
 builder.Services.AddScoped<IPostRepository, PostRepository>();

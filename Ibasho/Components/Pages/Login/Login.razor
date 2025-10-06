@@ -1,5 +1,4 @@
-﻿@page "/"
-@layout Ibasho.Components.Layout.LoginLayout
+﻿@page "/login"
 
 <PageTitle>Ibasho - ログイン</PageTitle>
 
@@ -7,20 +6,91 @@
     <h1 class="text-4xl font-bold text-sky-500">Ibasho</h1>
     <p class="mt-2 text-gray-500">あなたの「居場所」がここに</p>
 </div>
-<form class="space-y-6">
+<StatusMessage Message="@errorMessage" />
+<EditForm class="space-y-6" Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
+    <DataAnnotationsValidator />
     <div>
         <label for="email" class="text-sm font-medium text-gray-700">メールアドレス</label>
-        <input id="email" name="email" type="email" autocomplete="email" required class="w-full px-4 py-2 mt-2 text-gray-700 bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400" placeholder="your@email.com">
+        <InputText @bind-Value="Input.Email" class="w-full px-4 py-2 mt-2 text-gray-700 bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400"
+                   autocomplete="email" aria-required="true" placeholder="your@email.com" />
+        <ValidationMessage For="() => Input.Email" class="text-danger" />
     </div>
     <div>
+        <InputText type="password" @bind-Value="Input.Password" class="w-full px-4 py-2 mt-2 text-gray-700 bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400" 
+                   autocomplete="current-password" aria-required="true" placeholder="password" />
         <label for="password" class="text-sm font-medium text-gray-700">パスワード</label>
-        <input id="password" name="password" type="password" autocomplete="current-password" required class="w-full px-4 py-2 mt-2 text-gray-700 bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400" placeholder="Password">
+        <ValidationMessage For="() => Input.Password" class="text-danger" />
     </div>
-    <button onclick="event.preventDefault(); location.href = '/home';"
-            type="submit" class="w-full px-4 py-3 font-semibold text-white bg-sky-500 rounded-lg hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 transition-colors duration-300">
+    <button type="submit" class="w-full px-4 py-3 font-semibold text-white bg-sky-500 rounded-lg hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 transition-colors duration-300">
         ログイン
     </button>
-</form>
+</EditForm>
 <div class="text-center">
-    <a href="/signup" class="text-sm text-sky-500 hover:underline">アカウントをお持ちでないですか？ 新規登録</a>
+    <NavLink class="text-sm text-sky-500 hover:underline" href="signup">
+        アカウントをお持ちでないですか？ 新規登録
+    </NavLink>
 </div>
+
+
+@code {
+    // パス
+    public static string Path = "/login";
+
+    // エラーメッセージ
+    private string? errorMessage;
+
+    // HTTPコンテキスト
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    // 入力モデル
+    [SupplyParameterFromForm]
+    private LoginInputDto Input { get; set; } = new();
+
+    // リターンURL（クエリパラメータ）
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
+
+    /// <summary>
+    /// 初期化時に外部クッキーをクリアします
+    /// </summary>
+    /// <returns>タスク</returns>
+    protected override async Task OnInitializedAsync()
+    {
+        if (HttpMethods.IsGet(HttpContext.Request.Method))
+        {
+            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+        }
+    }
+
+    /// <summary>
+    /// ログイン処理を実行
+    /// </summary>
+    /// <returns>タスク</returns>
+    public async Task LoginUser()
+    {
+        // ログイン失敗はアカウントロックアウトの対象にはなりません
+        // パスワード失敗時にアカウントロックアウトをトリガーするには、lockoutOnFailure: true を設定します
+        SignInResult result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+        if (result.Succeeded)
+        {
+            string url = string.IsNullOrEmpty(ReturnUrl) ? Home.Path : ReturnUrl;
+            RedirectManager.RedirectTo(url);
+        }
+        else if (result.RequiresTwoFactor)
+        {
+            RedirectManager.RedirectTo(
+                "Account/LoginWith2fa",
+                new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe });
+        }
+        else if (result.IsLockedOut)
+        {
+            Logger.LogWarning("User account locked out.");
+            RedirectManager.RedirectTo("Account/Lockout");
+        }
+        else
+        {
+            errorMessage = "Error: Invalid login attempt.";
+        }
+    }
+}

@@ -1,0 +1,24 @@
+@page "/"
+
+@using Ibasho.Domain.Entities
+@using Microsoft.AspNetCore.Identity
+
+@inject NavigationManager NavigationManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo(Home.Home.Path, true);
+        }
+        else
+        {
+            NavigationManager.NavigateTo(Login.Login.Path, true);
+        }
+    }
+}

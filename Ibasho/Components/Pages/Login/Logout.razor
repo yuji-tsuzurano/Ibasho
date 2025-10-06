@@ -1,0 +1,21 @@
+﻿@page "/logout"
+
+<PageTitle>ログアウト</PageTitle>
+
+@code {
+    // パス
+    public static string Path = "/logout";
+
+    /// <summary>
+    /// ログアウト
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        var httpContext = HttpContextAccessor.HttpContext;
+        if (httpContext != null)
+        {
+            await httpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
+        }
+        NavigationManager.NavigateTo(Login.Path, true);
+    }
+}

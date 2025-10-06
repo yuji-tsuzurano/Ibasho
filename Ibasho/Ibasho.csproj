@@ -22,4 +22,10 @@
     <None Include="..\.editorconfig" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Components\Pages\Login\Logout.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
 </Project>
