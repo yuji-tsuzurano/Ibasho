@@ -33,6 +33,7 @@ public sealed class PostRepository(ApplicationDbContext db) : IPostRepository
             {
                 PostId = p.Id,
                 UserId = p.UserId,
+                DisplayUserId = p.User.DisplayUserId,
                 UserDisplayName = p.User.DisplayName,
                 UserAvatarUrl = p.User.AvatarUrl,
                 Content = p.Content,
@@ -61,6 +62,7 @@ public sealed class PostRepository(ApplicationDbContext db) : IPostRepository
             {
                 PostId = p.Id,
                 UserId = p.UserId,
+                DisplayUserId = p.User.DisplayUserId,
                 UserDisplayName = p.User.DisplayName,
                 UserAvatarUrl = p.User.AvatarUrl,
                 Content = p.Content,
@@ -110,6 +112,7 @@ public sealed class PostRepository(ApplicationDbContext db) : IPostRepository
             {
                 PostId = p.Id,
                 UserId = p.UserId,
+                DisplayUserId = p.User.DisplayUserId,
                 UserDisplayName = p.User.DisplayName,
                 UserAvatarUrl = p.User.AvatarUrl,
                 Content = p.Content,
@@ -143,6 +146,7 @@ public sealed class PostRepository(ApplicationDbContext db) : IPostRepository
             {
                 PostId = p!.Id,
                 UserId = p.UserId,
+                DisplayUserId = p.User.DisplayUserId,
                 UserDisplayName = p.User.DisplayName,
                 UserAvatarUrl = p.User.AvatarUrl,
                 Content = p.Content,

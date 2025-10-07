@@ -30,6 +30,7 @@ public sealed class NotificationRepository(ApplicationDbContext db) : INotificat
                 IsRead = n.IsRead,
                 CreatedAt = n.CreatedAt,
                 ActorUserId = n.ActorUserId,
+                ActorDisplayUserId = n.ActorUser.DisplayUserId,
                 ActorDisplayName = n.ActorUser.DisplayName,
                 ActorAvatarUrl = n.ActorUser.AvatarUrl,
                 PostId = n.PostId,

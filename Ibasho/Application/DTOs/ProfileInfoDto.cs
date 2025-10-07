@@ -8,6 +8,9 @@ public sealed class ProfileInfoDto
     /// 対象ユーザーID
     public string UserId { get; init; } = string.Empty;
 
+    /// 表示用ユーザーID
+    public string DisplayUserId { get; init; } = string.Empty;
+
     /// 表示名
     public string DisplayName { get; init; } = string.Empty;
 

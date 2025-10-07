@@ -9,6 +9,11 @@ namespace Ibasho.Domain.Entities
     public class ApplicationUser : IdentityUser
     {
         /// <summary>
+        /// 表示用ユーザーID（必須）
+        /// </summary>
+        public string DisplayUserId { get; set; } = string.Empty;
+
+        /// <summary>
         /// 表示名（必須）
         /// </summary>
         public string DisplayName { get; set; } = string.Empty;

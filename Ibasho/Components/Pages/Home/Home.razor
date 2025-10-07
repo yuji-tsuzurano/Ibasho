@@ -1,5 +1,7 @@
-﻿@page "/home"
-@inject Ibasho.Application.UseCases.Posts.GetHomeTimelineUseCase HomeTimelineUseCase
+﻿@*
+    ホーム画面
+*@
+@page "/home"
 
 <PageTitle>Ibasho - ホーム</PageTitle>
 
@@ -16,30 +18,7 @@
             {
                 @foreach (var post in posts)
                 {
-                    <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
-                        <div class="flex items-start space-x-3">
-                            <NavLink href="@Profile.Path">
-                                <img class="w-12 h-12 rounded-full cursor-pointer" src="./Image/default-user.png" alt="User Avatar">
-                            </NavLink>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2">
-                                    <span class="font-bold cursor-pointer">@post.UserDisplayName</span>
-                                    <span class="text-sm text-gray-500">@post.CreatedAt.ToString("yyyy/MM/dd HH:mm:ss")</span>
-                                </div>
-                                <p class="mt-1">@post.Content</p>
-                                <div class="flex items-center justify-between mt-4 text-gray-500">
-                                    <NavLink class="flex items-center space-x-1 hover:text-sky-500" href="@Reply.Path">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                                        <span class="text-sm">@post.ReplyCount</span>
-                                    </NavLink>
-                                    <button class="flex items-center space-x-1 text-gray-500">
-                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
-                                        <span class="text-sm font-semibold">@post.LikeCount</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <PostItem Post="post" />
                 }
             }
             else
@@ -55,7 +34,7 @@
     public static string Path = "/home";
 
     // 投稿一覧情報
-    private IReadOnlyList<PostListItemDto>? posts;
+    private IReadOnlyList<PostListItemDto> posts = new List<PostListItemDto>();
 
     /// <summary>
     /// 初期起動時
@@ -65,11 +44,7 @@
         string? userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
         if (!string.IsNullOrEmpty(userId))
         {
-            posts = await HomeTimelineUseCase.ExecuteAsync(userId);
-        }
-        else
-        {
-            posts = new List<PostListItemDto>();
+            posts = await GetHomeTimelineUseCase.ExecuteAsync(userId);
         }
     }
 }

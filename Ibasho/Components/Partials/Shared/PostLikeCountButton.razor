@@ -1,0 +1,54 @@
+@* 
+    いいねボタンのインタラクティブ化コンポーネント
+*@
+@rendermode InteractiveServer
+
+<button class="flex items-center space-x-1" @onclick="ToggleLike">
+    <svg class="w-5 h-5" fill="@(_isLiked ? "#ec4899" : "#6b7280")" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
+    <span class="text-sm font-semibold">@_likeCount</span>
+</button>
+
+@code {
+    // 投稿Id
+    [Parameter]
+    public long PostId { get; set; }
+
+    // いいね済み
+    [Parameter]
+    public bool IsLiked { get; set; }
+
+    // いいね数
+    [Parameter]
+    public int LikeCount { get; set; }
+
+    // いいね済み
+    private bool _isLiked;
+
+    // いいね数
+    private int _likeCount;
+
+    /// <summary>
+    /// パラメーターセット
+    /// </summary>
+    protected override void OnParametersSet()
+    {
+        _isLiked = IsLiked;
+        _likeCount = LikeCount;
+    }
+
+    /// <summary>
+    /// いいね切替
+    /// </summary>
+    private async Task ToggleLike()
+    {
+        string? userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
+        if (string.IsNullOrEmpty(userId))
+        {
+            return;
+        }
+        ToggleLikeResultDto result = await ToggleLikeUseCase.ExecuteAsync(PostId, userId);
+        _isLiked = result.IsLiked;
+        _likeCount = result.LikeCount;
+        StateHasChanged();
+    }
+}

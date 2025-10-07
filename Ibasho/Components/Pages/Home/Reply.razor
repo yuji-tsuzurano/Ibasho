@@ -1,4 +1,7 @@
-﻿@page "/reply"
+﻿@*
+    返信画面
+*@
+@page "/reply/{PostId:long}"
 
 <PageTitle>Ibasho - 返信</PageTitle>
 
@@ -41,4 +44,8 @@
 @code {
     // パス
     public static string Path = "/reply";
+
+    // 投稿Id
+    [Parameter]
+    public long PostId { get; set; } = 0;
 }

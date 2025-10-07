@@ -11,6 +11,9 @@ public sealed class PostListItemDto
     /// 投稿者のユーザーID
     public string UserId { get; init; } = string.Empty;
 
+    /// 投稿者の表示用ユーザーID
+    public string DisplayUserId { get; init; } = string.Empty;
+
     /// 投稿者の表示名
     public string UserDisplayName { get; init; } = string.Empty;
 

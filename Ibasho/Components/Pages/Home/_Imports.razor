@@ -2,7 +2,9 @@
 @attribute [Microsoft.AspNetCore.Authorization.Authorize]
 
 @using Ibasho.Application.DTOs
-@using Ibasho.Components.Pages.Profile
 @using Ibasho.Application.Services.Auth
+@using Ibasho.Components.Pages.Profile
+@using Ibasho.Components.Partials.Shared
 
+@inject Ibasho.Application.UseCases.Posts.GetHomeTimelineUseCase GetHomeTimelineUseCase
 @inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider

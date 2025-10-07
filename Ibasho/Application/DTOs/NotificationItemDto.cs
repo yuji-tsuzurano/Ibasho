@@ -22,6 +22,9 @@ public sealed class NotificationItemDto
     /// アクターのユーザーID
     public string ActorUserId { get; init; } = string.Empty;
 
+    /// アクターの表示用ユーザーID
+    public string ActorDisplayUserId { get; init; } = string.Empty;
+
     /// アクターの表示名
     public string ActorDisplayName { get; init; } = string.Empty;
 

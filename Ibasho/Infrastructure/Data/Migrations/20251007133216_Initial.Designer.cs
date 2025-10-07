@@ -9,10 +9,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Ibasho.Domain.Entities.Migrations
+namespace Ibasho.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250925135351_Initial")]
+    [Migration("20251007133216_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -60,6 +60,11 @@ namespace Ibasho.Domain.Entities.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("display_name");
+
+                    b.Property<string>("DisplayUserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("display_user_id");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -136,7 +141,7 @@ namespace Ibasho.Domain.Entities.Migrations
                     b.ToTable("asp_net_users", (string)null);
                 });
 
-            modelBuilder.Entity("Ibasho.Domain.Entities.Entities.Follow", b =>
+            modelBuilder.Entity("Ibasho.Domain.Entities.Follow", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -175,7 +180,7 @@ namespace Ibasho.Domain.Entities.Migrations
                     b.ToTable("follows");
                 });
 
-            modelBuilder.Entity("Ibasho.Domain.Entities.Entities.Notification", b =>
+            modelBuilder.Entity("Ibasho.Domain.Entities.Notification", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -236,7 +241,7 @@ namespace Ibasho.Domain.Entities.Migrations
                     b.ToTable("notifications");
                 });
 
-            modelBuilder.Entity("Ibasho.Domain.Entities.Entities.Post", b =>
+            modelBuilder.Entity("Ibasho.Domain.Entities.Post", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -290,7 +295,7 @@ namespace Ibasho.Domain.Entities.Migrations
                     b.ToTable("posts");
                 });
 
-            modelBuilder.Entity("Ibasho.Domain.Entities.Entities.PostLike", b =>
+            modelBuilder.Entity("Ibasho.Domain.Entities.PostLike", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -495,7 +500,7 @@ namespace Ibasho.Domain.Entities.Migrations
                     b.ToTable("asp_net_user_tokens", (string)null);
                 });
 
-            modelBuilder.Entity("Ibasho.Domain.Entities.Entities.Follow", b =>
+            modelBuilder.Entity("Ibasho.Domain.Entities.Follow", b =>
                 {
                     b.HasOne("Ibasho.Domain.Entities.ApplicationUser", "Followee")
                         .WithMany("Followers")
@@ -516,7 +521,7 @@ namespace Ibasho.Domain.Entities.Migrations
                     b.Navigation("Follower");
                 });
 
-            modelBuilder.Entity("Ibasho.Domain.Entities.Entities.Notification", b =>
+            modelBuilder.Entity("Ibasho.Domain.Entities.Notification", b =>
                 {
                     b.HasOne("Ibasho.Domain.Entities.ApplicationUser", "ActorUser")
                         .WithMany()
@@ -525,7 +530,7 @@ namespace Ibasho.Domain.Entities.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_notifications_asp_net_users_actor_user_id");
 
-                    b.HasOne("Ibasho.Domain.Entities.Entities.Post", "Post")
+                    b.HasOne("Ibasho.Domain.Entities.Post", "Post")
                         .WithMany()
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.SetNull)
@@ -545,9 +550,9 @@ namespace Ibasho.Domain.Entities.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Ibasho.Domain.Entities.Entities.Post", b =>
+            modelBuilder.Entity("Ibasho.Domain.Entities.Post", b =>
                 {
-                    b.HasOne("Ibasho.Domain.Entities.Entities.Post", "ParentPost")
+                    b.HasOne("Ibasho.Domain.Entities.Post", "ParentPost")
                         .WithMany("Replies")
                         .HasForeignKey("ParentPostId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -565,9 +570,9 @@ namespace Ibasho.Domain.Entities.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Ibasho.Domain.Entities.Entities.PostLike", b =>
+            modelBuilder.Entity("Ibasho.Domain.Entities.PostLike", b =>
                 {
-                    b.HasOne("Ibasho.Domain.Entities.Entities.Post", "Post")
+                    b.HasOne("Ibasho.Domain.Entities.Post", "Post")
                         .WithMany("Likes")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -656,7 +661,7 @@ namespace Ibasho.Domain.Entities.Migrations
                     b.Navigation("Posts");
                 });
 
-            modelBuilder.Entity("Ibasho.Domain.Entities.Entities.Post", b =>
+            modelBuilder.Entity("Ibasho.Domain.Entities.Post", b =>
                 {
                     b.Navigation("Likes");
 

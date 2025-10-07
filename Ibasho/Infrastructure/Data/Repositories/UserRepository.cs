@@ -23,6 +23,7 @@ public sealed class UserRepository(ApplicationDbContext db) : IUserRepository
             .Select(u => new ProfileInfoDto
             {
                 UserId = u.Id,
+                DisplayUserId = u.DisplayUserId,
                 DisplayName = u.DisplayName,
                 Bio = u.Bio,
                 AvatarUrl = u.AvatarUrl,
@@ -55,6 +56,7 @@ public sealed class UserRepository(ApplicationDbContext db) : IUserRepository
             .Select(u => new UserListItemDto
             {
                 UserId = u.Id,
+                DisplayUserId = u.DisplayUserId,
                 DisplayName = u.DisplayName,
                 AvatarUrl = u.AvatarUrl,
                 Bio = u.Bio,

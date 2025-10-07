@@ -38,4 +38,14 @@ public sealed class PostLikeRepository(ApplicationDbContext db) : IPostLikeRepos
             return true;
         }
     }
+    /// <summary>
+    /// 投稿のいいね数を取得
+    /// </summary>
+    /// <param name="postId">対象の投稿ID</param>
+    /// <param name="ct">キャンセルトークン</param>
+    /// <returns>投稿のいいね数</returns>
+    public Task<int> CountAsync(long postId, CancellationToken ct = default)
+    {
+        return db.PostLikes.CountAsync(x => x.PostId == postId, ct);
+    }
 }

@@ -1,3 +1,6 @@
+﻿@*
+    ルートリダイレクト
+*@
 @page "/"
 
 @using Ibasho.Domain.Entities
@@ -8,6 +11,9 @@
 @inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider
 
 @code {
+    /// <summary>
+    /// 初期起動時
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();

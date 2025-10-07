@@ -28,6 +28,7 @@ public sealed class PostSearchRepository(ApplicationDbContext db) : IPostSearchR
             {
                 PostId = p.Id,
                 UserId = p.UserId,
+                DisplayUserId = p.User.DisplayUserId,
                 UserDisplayName = p.User.DisplayName,
                 UserAvatarUrl = p.User.AvatarUrl,
                 Content = p.Content,

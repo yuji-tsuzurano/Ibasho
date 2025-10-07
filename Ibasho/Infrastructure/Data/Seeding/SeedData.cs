@@ -55,9 +55,10 @@ namespace Ibasho.Infrastructure.Data.Seeding
                 {
                     UserName = $"testuser{userNumber}@example.com",
                     Email = $"testuser{userNumber}@example.com",
+                    DisplayUserId = $"testuser{userNumber}",
                     DisplayName = $"テストユーザー{userNumber}",
                     Bio = $"テストユーザー{userNumber}です。よろしくお願いします。",
-                    AvatarUrl = $"/images/avatars/default{(i % 5) + 1}.png",
+                    AvatarUrl = $"./Image/default-user.png",
                     EmailConfirmed = true,
                     CreatedAt = DateTime.UtcNow.AddDays(-(i + 1)) // 1日間隔で作成
                 };
