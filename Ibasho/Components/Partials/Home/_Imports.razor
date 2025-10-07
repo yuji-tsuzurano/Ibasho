@@ -1,0 +1,8 @@
+﻿@using Ibasho.Application.DTOs
+@using Ibasho.Application.Services.Auth
+@using Ibasho.Application.UseCases.Posts
+@using Ibasho.Components.Partials.Shared
+
+@inject CreatePostUseCase CreatePostUseCase
+@inject GetHomeTimelineUseCase GetHomeTimelineUseCase
+@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider

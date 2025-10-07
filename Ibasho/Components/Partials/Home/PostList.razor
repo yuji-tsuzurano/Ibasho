@@ -1,0 +1,119 @@
+@*
+    投稿一覧コンポーネント
+*@
+@rendermode InteractiveServer
+
+@* 投稿フォーム *@
+<div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm mb-4">
+    <EditForm Model="this" OnValidSubmit="OnSubmitAsync">
+        <InputTextArea @bind-Value="Content" class="w-full p-2 border-none rounded-lg focus:ring-0 resize-none" rows="3" placeholder="いまどうしてる？" />
+        <ValidationMessage For="@(() => Content)" />
+        <div class="flex justify-end mt-2">
+            <button type="submit" class="px-5 py-2 text-sm font-semibold text-white bg-sky-500 rounded-full hover:bg-sky-600 transition-colors duration-300" disabled="@IsPosting">
+                @if (IsPosting) 
+                { 
+                    <span>投稿中...</span>
+                } 
+                else
+                { 
+                    <span>投稿する</span>
+                }
+            </button>
+        </div>
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <div class="text-red-500 text-sm mt-2">@ErrorMessage</div>
+        }
+    </EditForm>
+</div>
+@* 投稿一覧 *@
+<div class="space-y-3 mt-4">
+    @if (Posts == null || Posts.Count == 0)
+    {
+        <div class="text-gray-500 text-center py-8">投稿はまだありません</div>
+    }
+    else
+    {
+        <div class="space-y-4">
+            @foreach (var post in Posts)
+            {
+                <PostItem Post="post" />
+            }
+        </div>
+    }
+</div>
+
+@code {
+    // 投稿一覧
+    private List<PostListItemDto>? Posts;
+
+    // 投稿内容
+    public string Content { get; set; } = string.Empty;
+
+    // 投稿中
+    public bool IsPosting { get; set; } = false;
+
+    // エラーメッセージ
+    public string? ErrorMessage { get; set; }
+
+    /// <summary>
+    /// 初期表示時
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        await GetPostsAsync();
+    }
+
+    /// <summary>
+    /// 投稿一覧取得
+    /// </summary>
+    public async Task GetPostsAsync()
+    {
+        var userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
+        if (!string.IsNullOrEmpty(userId))
+        {
+            var result = await GetHomeTimelineUseCase.ExecuteAsync(userId);
+            Posts = result.ToList();
+        }
+        else
+        {
+            Posts = new List<PostListItemDto>();
+        }
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// 投稿
+    /// </summary>
+    private async Task OnSubmitAsync()
+    {
+        ErrorMessage = null;
+        if (string.IsNullOrWhiteSpace(Content))
+        {
+            ErrorMessage = "投稿内容を入力してください。";
+            return;
+        }
+        IsPosting = true;
+        try
+        {
+            var userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
+            if (string.IsNullOrEmpty(userId))
+            {
+                ErrorMessage = "認証情報が取得できません。";
+                return;
+            }
+            await CreatePostUseCase.ExecuteAsync(userId, Content);
+            Content = string.Empty;
+            await GetPostsAsync();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = "投稿に失敗しました: " + ex.Message;
+        }
+        finally
+        {
+            IsPosting = false;
+            StateHasChanged();
+        }
+    }
+}

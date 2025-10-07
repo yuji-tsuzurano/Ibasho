@@ -7,44 +7,11 @@
 
 <div class="space-y-4">
     <div class="p-4">
-        <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
-            <textarea class="w-full p-2 border-none rounded-lg focus:ring-0 resize-none" rows="3" placeholder="いまどうしてる？"></textarea>
-            <div class="flex justify-end mt-2">
-                <button class="px-5 py-2 text-sm font-semibold text-white bg-sky-500 rounded-full hover:bg-sky-600 transition-colors duration-300">投稿する</button>
-            </div>
-        </div>
-        <div class="space-y-3 mt-4">
-            @if (posts != null)
-            {
-                @foreach (var post in posts)
-                {
-                    <PostItem Post="post" />
-                }
-            }
-            else
-            {
-                <div>投稿がありません</div>
-            }
-        </div>
+        <PostList />
     </div>
 </div>
 
 @code {
     // パス
     public static string Path = "/home";
-
-    // 投稿一覧情報
-    private IReadOnlyList<PostListItemDto> posts = new List<PostListItemDto>();
-
-    /// <summary>
-    /// 初期起動時
-    /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
-        string? userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
-        if (!string.IsNullOrEmpty(userId))
-        {
-            posts = await GetHomeTimelineUseCase.ExecuteAsync(userId);
-        }
-    }
 }
