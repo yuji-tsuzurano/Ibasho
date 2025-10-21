@@ -24,14 +24,14 @@ public sealed class ProfileInfoDto
     public string? BannerUrl { get; init; }
 
     /// フォロー数
-    public int FollowingCount { get; init; }
+    public int FollowingCount { get; set; }
 
     /// フォロワー数
-    public int FollowerCount { get; init; }
+    public int FollowerCount { get; set; }
 
     /// 投稿数（親投稿のみ）
-    public int PostCount { get; init; }
+    public int PostCount { get; set; }
 
     /// 現在ユーザーが対象をフォローしているか
-    public bool IsFollowedByCurrentUser { get; init; }
+    public bool IsFollowedByCurrentUser { get; set; }
 }

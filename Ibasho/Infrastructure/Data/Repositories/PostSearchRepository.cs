@@ -7,8 +7,8 @@ namespace Ibasho.Infrastructure.Data.Repositories;
 /// <summary>
 /// 投稿検索のEF実装
 /// </summary>
-/// <param name="db">EF Core のアプリケーションDBコンテキスト。</param>
-public sealed class PostSearchRepository(ApplicationDbContext db) : IPostSearchRepository
+/// <param name="dbFactory">DbContextのファクトリ</param>
+public sealed class PostSearchRepository(IDbContextFactory<ApplicationDbContext> dbFactory) : IPostSearchRepository
 {
     /// <summary>
     /// キーワードに部分一致する投稿を検索
@@ -20,6 +20,7 @@ public sealed class PostSearchRepository(ApplicationDbContext db) : IPostSearchR
     /// <returns>投稿一覧</returns>
     public async Task<IReadOnlyList<PostListItemDto>> SearchAsync(string keyword, string currentUserId, int limit, CancellationToken ct = default)
     {
+        await using ApplicationDbContext db = await dbFactory.CreateDbContextAsync(ct);
         IQueryable<PostListItemDto> q = db.Posts.AsNoTracking()
             .Where(p => p.ParentPostId == null && p.Content.Contains(keyword))
             .OrderByDescending(p => p.CreatedAt)

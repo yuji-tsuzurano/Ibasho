@@ -40,8 +40,13 @@ builder.Services.AddAuthentication(options =>
     .AddIdentityCookies();
 
 string connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContext<ApplicationDbContext>(
+    options => options.UseNpgsql(connectionString),
+    contextLifetime: ServiceLifetime.Scoped,
+    optionsLifetime: ServiceLifetime.Singleton);
+builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -49,7 +54,7 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+builder.Services.AddScoped<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -75,6 +80,7 @@ builder.Services.AddScoped<CreateReplyUseCase>();
 builder.Services.AddScoped<GetUserProfileUseCase>();
 builder.Services.AddScoped<GetUserPostsUseCase>();
 builder.Services.AddScoped<GetUserLikesUseCase>();
+builder.Services.AddScoped<GetDisplayUserIdUseCase>();
 builder.Services.AddScoped<ToggleFollowUseCase>();
 builder.Services.AddScoped<GetNotificationsUseCase>();
 builder.Services.AddScoped<MarkAllNotificationsReadUseCase>();
