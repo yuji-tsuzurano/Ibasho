@@ -6,8 +6,8 @@ namespace Ibasho.Infrastructure.Data.Repositories;
 /// <summary>
 /// ユーザープロフィール関連情報取得のEF実装
 /// </summary>
-/// <param name="db">EF Core のアプリケーションDBコンテキスト</param>
-public sealed class UserProfileQueryRepository(ApplicationDbContext db) : IUserProfileQueryRepository
+/// <param name="dbFactory">DbContextのファクトリ</param>
+public sealed class UserProfileQueryRepository(IDbContextFactory<ApplicationDbContext> dbFactory) : IUserProfileQueryRepository
 {
     /// <summary>
     /// 指定ユーザーのプロフィール情報を取得
@@ -21,12 +21,13 @@ public sealed class UserProfileQueryRepository(ApplicationDbContext db) : IUserP
         string currentUserId,
         CancellationToken ct = default)
     {
-        Task<int> followingTask = db.Follows.AsNoTracking().CountAsync(f => f.FollowerId == targetUserId, ct);
-        Task<int> followersTask = db.Follows.AsNoTracking().CountAsync(f => f.FolloweeId == targetUserId, ct);
-        Task<int> postsTask = db.Posts.AsNoTracking().CountAsync(p => p.UserId == targetUserId && p.ParentPostId == null, ct);
-        Task<bool> followedTask = db.Follows.AsNoTracking().AnyAsync(f => f.FollowerId == currentUserId && f.FolloweeId == targetUserId, ct);
+        await using ApplicationDbContext db = await dbFactory.CreateDbContextAsync(ct);
 
-        await Task.WhenAll(followingTask, followersTask, postsTask, followedTask);
-        return (followingTask.Result, followersTask.Result, postsTask.Result, followedTask.Result);
+        int following = await db.Follows.AsNoTracking().CountAsync(f => f.FollowerId == targetUserId, ct);
+        int followers = await db.Follows.AsNoTracking().CountAsync(f => f.FolloweeId == targetUserId, ct);
+        int posts = await db.Posts.AsNoTracking().CountAsync(p => p.UserId == targetUserId && p.ParentPostId == null, ct);
+        bool isFollowed = await db.Follows.AsNoTracking().AnyAsync(f => f.FollowerId == currentUserId && f.FolloweeId == targetUserId, ct);
+
+        return (following, followers, posts, isFollowed);
     }
 }

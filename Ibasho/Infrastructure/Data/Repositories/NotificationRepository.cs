@@ -7,8 +7,8 @@ namespace Ibasho.Infrastructure.Data.Repositories;
 /// <summary>
 /// 通知操作のEF実装
 /// </summary>
-/// <param name="db">EF Core のアプリケーションDBコンテキスト。</param>
-public sealed class NotificationRepository(ApplicationDbContext db) : INotificationRepository
+/// <param name="dbFactory">DbContextのファクトリ</param>
+public sealed class NotificationRepository(IDbContextFactory<ApplicationDbContext> dbFactory) : INotificationRepository
 {
     /// <summary>
     /// 指定ユーザーの直近の通知を取得
@@ -17,8 +17,9 @@ public sealed class NotificationRepository(ApplicationDbContext db) : INotificat
     /// <param name="limit">取得最大件数</param>
     /// <param name="ct">キャンセルトークン</param>
     /// <returns>通知情報一覧</returns>
-    public Task<IReadOnlyList<NotificationItemDto>> GetRecentAsync(string userId, int limit, CancellationToken ct = default)
+    public async Task<IReadOnlyList<NotificationItemDto>> GetRecentAsync(string userId, int limit, CancellationToken ct = default)
     {
+        await using ApplicationDbContext db = await dbFactory.CreateDbContextAsync(ct);
         IQueryable<NotificationItemDto> q = db.Notifications.AsNoTracking()
             .Where(n => n.UserId == userId)
             .OrderByDescending(n => n.CreatedAt)
@@ -37,7 +38,7 @@ public sealed class NotificationRepository(ApplicationDbContext db) : INotificat
                 Message = n.Message
             });
 
-        return q.ToListAsync(ct).ContinueWith(t => (IReadOnlyList<NotificationItemDto>)t.Result, ct);
+        return await q.ToListAsync(ct);
     }
 
     /// <summary>
@@ -46,9 +47,10 @@ public sealed class NotificationRepository(ApplicationDbContext db) : INotificat
     /// <param name="userId">取得対象のユーザーID</param>
     /// <param name="ct">キャンセルトークン</param>
     /// <returns>タスク</returns>
-    public Task MarkAllReadAsync(string userId, CancellationToken ct = default)
+    public async Task MarkAllReadAsync(string userId, CancellationToken ct = default)
     {
-        return db.Notifications
+        await using ApplicationDbContext db = await dbFactory.CreateDbContextAsync(ct);
+        _ = await db.Notifications
             .Where(n => n.UserId == userId && !n.IsRead)
             .ExecuteUpdateAsync(s => s.SetProperty(n => n.IsRead, true), ct);
     }
