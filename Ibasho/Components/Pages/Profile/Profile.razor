@@ -5,6 +5,7 @@
 @using Ibasho.Application.UseCases.Profiles
 @using Ibasho.Application.DTOs
 @using Ibasho.Application.Services.Auth
+@using Ibasho.Domain.Entities
 @inject GetUserProfileUseCase GetUserProfileUseCase
 @inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider
 
@@ -18,17 +19,17 @@
         </div>
         <div class="p-4">
             <div class="flex items-end -mt-16">
-                <img class="h-24 w-24 rounded-full border-4 border-white" src="https://placehold.co/150x150/93C5FD/FFFFFF?text=Me" alt="My Avatar">
+                <img class="h-24 w-24 rounded-full border-4 border-white" src="./Image/default-user.png" alt="My Avatar">
                 <button onclick="event.preventDefault(); location.href = '/profile/edit';" class="ml-auto px-4 py-2 text-sm font-semibold border border-gray-300 rounded-full hover:bg-gray-100">プロフィールを編集</button>
             </div>
             <div class="mt-4">
                 <h2 class="text-xl font-bold">@ProfileInfo.DisplayName</h2>
-                <p class="text-sm text-gray-500">@("@me")</p>
-                <p class="mt-2 text-gray-700">こんにちは！これはプロフィールの自己紹介文です。Ibashoアプリを作成しています。</p>
+                <p class="text-sm text-gray-500">@("@testuser1")</p>
+                <p class="mt-2 text-gray-700">テストユーザー1です。よろしくお願いします。</p>
             </div>
             <div class="flex mt-4 space-x-4 text-sm text-gray-600">
-                <p class="cursor-pointer" onclick="showContent('follow-list')"><span class="font-bold text-gray-800">120</span> フォロー中</p>
-                <p class="cursor-pointer" onclick="showContent('follow-list')"><span class="font-bold text-gray-800">85</span> フォロワー</p>
+                <p class="cursor-pointer" onclick="showContent('follow-list')"><span class="font-bold text-gray-800">2</span> フォロー中</p>
+                <p class="cursor-pointer" onclick="showContent('follow-list')"><span class="font-bold text-gray-800">2</span> フォロワー</p>
             </div>
         </div>
         <div class="border-t border-gray-200">
@@ -42,17 +43,66 @@
     <div id="profile-content-posts" class="space-y-4">
         <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
             <div class="flex items-start space-x-3">
-                <img class="w-12 h-12 rounded-full" src="https://placehold.co/150x150/93C5FD/FFFFFF?text=Me" alt="My Avatar">
+                <img class="w-12 h-12 rounded-full cursor-pointer" src="../Image/default-user.png" alt="User Avatar">
                 <div class="flex-1">
                     <div class="flex items-center space-x-2">
-                        <span class="font-bold">自分</span>
-                        <span class="text-sm text-gray-500">@("@me") · 2日前</span>
+                        <span class="font-bold">テストユーザー1</span>
+                        <span class="text-sm text-gray-500">@("@testuser1") · 10月7日</span>
                     </div>
-                    <p class="mt-1">プロフィール画面を作成中。いい感じにできたかな？</p>
+                    <p class="mt-1">友達と楽しい時間を過ごしました👥 #015</p>
+                </div>
+            </div>
+        </div>
+        <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
+            <div class="flex items-start space-x-3">
+                <img class="w-12 h-12 rounded-full cursor-pointer" src="../Image/default-user.png" alt="User Avatar">
+                <div class="flex-1">
+                    <div class="flex items-center space-x-2">
+                        <span class="font-bold">テストユーザー1</span>
+                        <span class="text-sm text-gray-500">@("@testuser1") · 9月22日</span>
+                    </div>
+                    <p class="mt-1">桜が綺麗に咲いています🌸 #030</p>
+                </div>
+            </div>
+        </div>
+        <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
+            <div class="flex items-start space-x-3">
+                <img class="w-12 h-12 rounded-full cursor-pointer" src="../Image/default-user.png" alt="User Avatar">
+                <div class="flex-1">
+                    <div class="flex items-center space-x-2">
+                        <span class="font-bold">テストユーザー1</span>
+                        <span class="text-sm text-gray-500">@("@testuser1") · 9月7日</span>
+                    </div>
+                    <p class="mt-1">技術書を読んで知識を深めています #045</p>
+                </div>
+            </div>
+        </div>
+        <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
+            <div class="flex items-start space-x-3">
+                <img class="w-12 h-12 rounded-full cursor-pointer" src="../Image/default-user.png" alt="User Avatar">
+                <div class="flex-1">
+                    <div class="flex items-center space-x-2">
+                        <span class="font-bold">テストユーザー1</span>
+                        <span class="text-sm text-gray-500">@("@testuser1") · 8月23日</span>
+                    </div>
+                    <p class="mt-1">音楽を聞きながらリラックス🎵 #060</p>
+                </div>
+            </div>
+        </div>
+        <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
+            <div class="flex items-start space-x-3">
+                <img class="w-12 h-12 rounded-full cursor-pointer" src="../Image/default-user.png" alt="User Avatar">
+                <div class="flex-1">
+                    <div class="flex items-center space-x-2">
+                        <span class="font-bold">テストユーザー1</span>
+                        <span class="text-sm text-gray-500">@("@testuser1") · 8月8日</span>
+                    </div>
+                    <p class="mt-1">美味しいラーメンを食べました🍜 #075</p>
                 </div>
             </div>
         </div>
     </div>
+
     @* いいね一覧 *@
     <div id="profile-content-likes" class="hidden space-y-4">
         <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
