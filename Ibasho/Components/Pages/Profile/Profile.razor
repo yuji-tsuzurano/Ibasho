@@ -7,6 +7,7 @@
 @using Ibasho.Application.Services.Auth
 @using Ibasho.Domain.Entities
 @inject GetUserProfileUseCase GetUserProfileUseCase
+@inject GetUserPostsUseCase GetUserPostsUseCase
 @inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider
 
 <PageTitle>Ibasho - プロフィール</PageTitle>
@@ -24,12 +25,12 @@
             </div>
             <div class="mt-4">
                 <h2 class="text-xl font-bold">@ProfileInfo.DisplayName</h2>
-                <p class="text-sm text-gray-500">@("@testuser1")</p>
-                <p class="mt-2 text-gray-700">テストユーザー1です。よろしくお願いします。</p>
+                <p class="text-sm text-gray-500">@("@"+ProfileInfo.DisplayUserId)</p>
+                <p class="mt-2 text-gray-700">@ProfileInfo.Bio</p>
             </div>
             <div class="flex mt-4 space-x-4 text-sm text-gray-600">
-                <p class="cursor-pointer" onclick="showContent('follow-list')"><span class="font-bold text-gray-800">2</span> フォロー中</p>
-                <p class="cursor-pointer" onclick="showContent('follow-list')"><span class="font-bold text-gray-800">2</span> フォロワー</p>
+                <p class="cursor-pointer" onclick="showContent('follow-list')"><span class="font-bold text-gray-800">@ProfileInfo.FollowingCount</span> フォロー中</p>
+                <p class="cursor-pointer" onclick="showContent('follow-list')"><span class="font-bold text-gray-800">@ProfileInfo.FollowerCount</span> フォロワー</p>
             </div>
         </div>
         <div class="border-t border-gray-200">
@@ -41,66 +42,23 @@
     </div>
     @* 投稿一覧 *@
     <div id="profile-content-posts" class="space-y-4">
-        <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
-            <div class="flex items-start space-x-3">
-                <img class="w-12 h-12 rounded-full cursor-pointer" src="../Image/default-user.png" alt="User Avatar">
-                <div class="flex-1">
-                    <div class="flex items-center space-x-2">
-                        <span class="font-bold">テストユーザー1</span>
-                        <span class="text-sm text-gray-500">@("@testuser1") · 10月7日</span>
+        @foreach (PostListItemDto myPostInfo in MyPostInfos)
+        {
+            <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
+                <div class="flex items-start space-x-3">
+                    <img class="w-12 h-12 rounded-full cursor-pointer" src="../Image/default-user.png" alt="User Avatar">
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-2">
+                            <span class="font-bold">@myPostInfo.UserDisplayName</span>
+                            <span class="text-sm text-gray-500">@("@" + myPostInfo.DisplayUserId) · @myPostInfo.CreatedAt</span>
+                        </div>
+                        <p class="mt-1">@myPostInfo.Content </p>
                     </div>
-                    <p class="mt-1">友達と楽しい時間を過ごしました👥 #015</p>
                 </div>
             </div>
-        </div>
-        <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
-            <div class="flex items-start space-x-3">
-                <img class="w-12 h-12 rounded-full cursor-pointer" src="../Image/default-user.png" alt="User Avatar">
-                <div class="flex-1">
-                    <div class="flex items-center space-x-2">
-                        <span class="font-bold">テストユーザー1</span>
-                        <span class="text-sm text-gray-500">@("@testuser1") · 9月22日</span>
-                    </div>
-                    <p class="mt-1">桜が綺麗に咲いています🌸 #030</p>
-                </div>
-            </div>
-        </div>
-        <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
-            <div class="flex items-start space-x-3">
-                <img class="w-12 h-12 rounded-full cursor-pointer" src="../Image/default-user.png" alt="User Avatar">
-                <div class="flex-1">
-                    <div class="flex items-center space-x-2">
-                        <span class="font-bold">テストユーザー1</span>
-                        <span class="text-sm text-gray-500">@("@testuser1") · 9月7日</span>
-                    </div>
-                    <p class="mt-1">技術書を読んで知識を深めています #045</p>
-                </div>
-            </div>
-        </div>
-        <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
-            <div class="flex items-start space-x-3">
-                <img class="w-12 h-12 rounded-full cursor-pointer" src="../Image/default-user.png" alt="User Avatar">
-                <div class="flex-1">
-                    <div class="flex items-center space-x-2">
-                        <span class="font-bold">テストユーザー1</span>
-                        <span class="text-sm text-gray-500">@("@testuser1") · 8月23日</span>
-                    </div>
-                    <p class="mt-1">音楽を聞きながらリラックス🎵 #060</p>
-                </div>
-            </div>
-        </div>
-        <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
-            <div class="flex items-start space-x-3">
-                <img class="w-12 h-12 rounded-full cursor-pointer" src="../Image/default-user.png" alt="User Avatar">
-                <div class="flex-1">
-                    <div class="flex items-center space-x-2">
-                        <span class="font-bold">テストユーザー1</span>
-                        <span class="text-sm text-gray-500">@("@testuser1") · 8月8日</span>
-                    </div>
-                    <p class="mt-1">美味しいラーメンを食べました🍜 #075</p>
-                </div>
-            </div>
-        </div>
+
+        }
+        
     </div>
 
     @* いいね一覧 *@
@@ -132,6 +90,9 @@
     // プロフィール情報
     private ProfileInfoDto ProfileInfo = new();
 
+    // プロフィール情報
+    private IReadOnlyList<PostListItemDto> MyPostInfos = [];
+
     /// <summary>
     /// 初期表示時
     /// </summary>
@@ -141,6 +102,7 @@
         if (!string.IsNullOrEmpty(userId))
         {
             ProfileInfo = await GetUserProfileUseCase.ExecuteAsync(userId, userId);
+            MyPostInfos = await GetUserPostsUseCase.ExecuteAsync(userId, userId);
         }
         StateHasChanged();
     }
