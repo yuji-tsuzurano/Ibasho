@@ -58,7 +58,8 @@ namespace Ibasho.Infrastructure.Data.Seeding
                     DisplayUserId = $"testuser{userNumber}",
                     DisplayName = $"テストユーザー{userNumber}",
                     Bio = $"テストユーザー{userNumber}です。よろしくお願いします。",
-                    AvatarUrl = $"./Image/default-user.png",
+                    AvatarUrl = "./Image/default-user.png",
+                    BannerUrl = "https://placehold.co/600x200/BFDBFE/3B82F6?text=Banner",
                     EmailConfirmed = true,
                     CreatedAt = DateTime.UtcNow.AddDays(-(i + 1)) // 1日間隔で作成
                 };
