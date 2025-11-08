@@ -55,9 +55,9 @@
                     <div class="flex-1">
                         <div class="flex items-center space-x-2">
                             <span class="font-bold">@myPostInfo.UserDisplayName</span>
-                            <span class="text-sm text-gray-500">@("@" + myPostInfo.DisplayUserId) · @myPostInfo.CreatedAt</span>
+                            <span class="text-sm text-gray-500">@("@" + myPostInfo.DisplayUserId) · @myPostInfo.CreatedAt.ToString("HH:mm")</span>
                         </div>
-                        <p class="mt-1">@myPostInfo.Content </p>
+                        <p class="mt-1">@myPostInfo.Content</p>
                     </div>
                 </div>
             </div>
