@@ -2,6 +2,15 @@
     検索画面
 *@
 @page "/search"
+@rendermode InteractiveServer
+@using Ibasho.Application.DTOs
+@using Ibasho.Application.Services.Auth
+@using Ibasho.Application.UseCases.Search
+@using Ibasho.Components.Partials.Shared
+
+@inject SearchUsersUseCase SearchUsersUseCase
+@inject SearchPostsUseCase SearchPostsUseCase
+@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider
 
 <PageTitle>Ibasho - 検索</PageTitle>
 
@@ -9,7 +18,7 @@
     <div class="p-4">
         <h1 class="text-2xl font-bold text-gray-800">探す</h1>
         <div class="relative mt-4">
-            <input type="text" placeholder="キーワードで検索" class="w-full pl-10 pr-4 py-2 border rounded-full bg-gray-100 focus:outline-none focus:ring-2 focus:ring-sky-400">
+            <input type="text" placeholder="キーワードで検索" class="w-full pl-10 pr-4 py-2 border rounded-full bg-gray-100 focus:outline-none focus:ring-2 focus:ring-sky-400" @bind="Keyword" @onkeydown="OnSearchKeyDown">
             <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
         </div>
         <div class="border-b border-gray-200 mt-4">
@@ -19,16 +28,33 @@
             </nav>
         </div>
         <div id="search-content-users" class="space-y-3 mt-4">
-            <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm flex items-center space-x-4">
-                <img class="w-12 h-12 rounded-full cursor-pointer" onclick="event.preventDefault(); location.href = '/profile';" src="https://placehold.co/100x100/E2E8F0/4A5568?text=User" alt="User Avatar">
-                <div class="flex-1">
-                    <p class="font-bold">ユーザー名１</p>
-                    <p class="text-sm text-gray-500">簡単な自己紹介文がここに入ります。</p>
-                </div>
-            </div>
+            @if (UserResults != null && UserResults.Count > 0)
+            {
+                @foreach (var u in UserResults)
+                {
+                    <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm flex items-center space-x-4">
+                        <NavLink href=@($"/profile/{u.DisplayUserId}")>
+                            <img class="w-12 h-12 rounded-full cursor-pointer" src="@u.AvatarUrl" alt="User Avatar">
+                        </NavLink>
+                        <div class="flex-1">
+                            <p class="font-bold">@u.DisplayName</p>
+                            @if (!string.IsNullOrWhiteSpace(u.Bio))
+                            {
+                                <p class="text-sm text-gray-500">@u.Bio</p>
+                            }
+                        </div>
+                    </div>
+                }
+            }
         </div>
         <div id="search-content-posts" class="hidden space-y-3 mt-4">
-            <p class="text-center text-gray-500">投稿の検索結果がここに表示されます。</p>
+            @if (PostResults != null && PostResults.Count > 0)
+            {
+                @foreach (var p in PostResults)
+                {
+                    <PostItem Post="p" />
+                }
+            }
         </div>
     </div>
 </div>
@@ -36,4 +62,58 @@
 @code {
     // パス
     public static string Path = "/search";
+
+    // キーワード
+    private string Keyword { get; set; } = string.Empty;
+
+    // 検索結果
+    private List<UserListItemDto> UserResults { get; set; } = new();
+    private List<PostListItemDto> PostResults { get; set; } = new();
+
+    /// <summary>
+    /// 検索テキストボックスでキー押下
+    /// </summary>
+    /// <param name="e">キーイベント</param>
+    private async Task OnSearchKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await ExecuteSearchAsync();
+        }
+    }
+
+    /// <summary>
+    /// 検索実行
+    /// </summary>
+    private async Task ExecuteSearchAsync()
+    {
+        var keyword = (Keyword ?? string.Empty).Trim();
+        if (string.IsNullOrEmpty(keyword))
+        {
+            UserResults = new();
+            PostResults = new();
+            StateHasChanged();
+            return;
+        }
+
+        var userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider) ?? string.Empty;
+        // 認証されていない場合は空結果
+        if (string.IsNullOrEmpty(userId))
+        {
+            UserResults = new();
+            PostResults = new();
+            StateHasChanged();
+            return;
+        }
+
+        // 並列で検索
+        var usersTask = SearchUsersUseCase.ExecuteAsync(keyword, userId, 50);
+        var postsTask = SearchPostsUseCase.ExecuteAsync(keyword, userId, 50);
+        await Task.WhenAll(usersTask, postsTask);
+
+        UserResults = usersTask.Result.ToList();
+        PostResults = postsTask.Result.ToList();
+
+        StateHasChanged();
+    }
 }
