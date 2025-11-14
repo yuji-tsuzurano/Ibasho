@@ -5,6 +5,7 @@ using Ibasho.Application.UseCases.Posts;
 using Ibasho.Application.UseCases.Profiles;
 using Ibasho.Application.UseCases.Replies;
 using Ibasho.Application.UseCases.Search;
+using Ibasho.Application.UseCases.Users;
 using Ibasho.Components;
 using Ibasho.Components.Account;
 using Ibasho.Components.Pages.Login;
@@ -85,6 +86,7 @@ builder.Services.AddScoped<ToggleFollowUseCase>();
 builder.Services.AddScoped<GetNotificationsUseCase>();
 builder.Services.AddScoped<MarkAllNotificationsReadUseCase>();
 builder.Services.AddScoped<SearchUsersUseCase>();
+builder.Services.AddScoped<GetUserIdUseCase>();
 
 WebApplication app = builder.Build();
 

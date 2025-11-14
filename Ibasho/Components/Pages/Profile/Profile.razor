@@ -3,18 +3,19 @@
 *@
 @page "/profile/{DisplayUserId}"
 @using Ibasho.Application.UseCases.Profiles
+@using Ibasho.Application.UseCases.Users
 @using Ibasho.Application.DTOs
 @using Ibasho.Application.Services.Auth
-@using Ibasho.Domain.Entities
+@using Ibasho.Components.Partials.Profile
 @inject GetUserProfileUseCase GetUserProfileUseCase
-@inject GetUserPostsUseCase GetUserPostsUseCase
+@inject GetUserIdUseCase GetUserIdUseCase
 @inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider
 
 <PageTitle>Ibasho - プロフィール</PageTitle>
 
 <div class="space-y-4 px-4">
-    @* プロフィール *@
     <div class="mt-4 bg-white rounded-xl shadow-sm overflow-hidden">
+        @* プロフィール *@
         @if (ProfileInfo != null)
         {
             <div>
@@ -37,48 +38,9 @@
                     <p class="cursor-pointer" onclick="showContent('follow-list')"><span class="font-bold text-gray-800">@ProfileInfo.FollowerCount</span> フォロワー</p>
                 </div>
             </div>
-            <div class="border-t border-gray-200">
-                <nav class="flex">
-                    <a href="#" id="profile-tab-posts" onclick="event.preventDefault(); switchProfileTab('posts')" class="flex-1 text-center py-3 font-medium text-sky-500 border-b-2 border-sky-500">投稿</a>
-                    <a href="#" id="profile-tab-likes" onclick="event.preventDefault(); switchProfileTab('likes')" class="flex-1 text-center py-3 font-medium text-gray-500 hover:bg-gray-100">いいね</a>
-                </nav>
-            </div>
         }
-    </div>
-    @* 投稿一覧 *@
-    <div id="profile-content-posts" class="space-y-4">
-        @foreach (PostListItemDto myPostInfo in MyPostInfos)
-        {
-            <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
-                <div class="flex items-start space-x-3">
-                    <img class="w-12 h-12 rounded-full cursor-pointer" src="@myPostInfo.UserAvatarUrl" alt="User Avatar">
-                    <div class="flex-1">
-                        <div class="flex items-center space-x-2">
-                            <span class="font-bold">@myPostInfo.UserDisplayName</span>
-                            <span class="text-sm text-gray-500">@("@" + myPostInfo.DisplayUserId) · @myPostInfo.CreatedAt.ToString("HH:mm")</span>
-                        </div>
-                        <p class="mt-1">@myPostInfo.Content</p>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-
-    @* いいね一覧 *@
-    <div id="profile-content-likes" class="hidden space-y-4">
-        <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
-            <p class="text-sm text-gray-500 mb-2">あなたが「いいね」しました</p>
-            <div class="flex items-start space-x-3">
-                <img class="w-12 h-12 rounded-full cursor-pointer" onclick="showContent('user-profile')" src="https://placehold.co/100x100/E2E8F0/4A5568?text=User" alt="User Avatar">
-                <div class="flex-1">
-                    <div class="flex items-center space-x-2">
-                        <span class="font-bold">ユーザー名１</span>
-                        <span class="text-sm text-gray-500">@("@user1") · 5分前</span>
-                    </div>
-                    <p class="mt-1">Tailwind CSSを使ってSNSのUIを作るの、楽しい！ライトブルーがいい感じ。</p>
-                </div>
-            </div>
-        </div>
+        @* 投稿一覧 *@
+        <PostList DisplayUserId="@DisplayUserId" />
     </div>
 </div>
 
@@ -87,26 +49,26 @@
     public static string Path = "/profile";
 
     // 表示用ユーザId
-    [Parameter]
-    public string DisplayUserId { get; set; } = "";
+    [Parameter] public string DisplayUserId { get; set; } = "";
 
     // プロフィール情報
     private ProfileInfoDto? ProfileInfo;
-
-    // プロフィール情報
-    private IReadOnlyList<PostListItemDto> MyPostInfos = [];
 
     /// <summary>
     /// 初期表示時
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        var userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
-        if (!string.IsNullOrEmpty(userId))
+        string? myUserId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
+        if (string.IsNullOrEmpty(myUserId))
         {
-            ProfileInfo = await GetUserProfileUseCase.ExecuteAsync(userId, userId);
-            MyPostInfos = await GetUserPostsUseCase.ExecuteAsync(userId, userId);
+            return;
         }
-        StateHasChanged();
+        string? targetUserId = await GetUserIdUseCase.ExecuteAsync(DisplayUserId);
+        if (string.IsNullOrEmpty(targetUserId))
+        {
+            return;
+        }
+        ProfileInfo = await GetUserProfileUseCase.ExecuteAsync(targetUserId, myUserId);
     }
 }
