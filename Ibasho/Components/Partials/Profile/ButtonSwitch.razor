@@ -1,0 +1,54 @@
+@* 
+    ボタン切替コンポーネント
+*@
+@rendermode InteractiveServer
+@using Ibasho.Components.Pages.Profile
+
+@if (LoginUserId == TargetUserId)
+{
+    <NavLink href=@($"{Edit.Path}/{DisplayUserId}") class="ml-auto px-4 py-2 text-sm font-semibold border border-gray-300 rounded-full hover:bg-gray-100">
+        プロフィールを編集
+    </NavLink>
+}
+else
+{
+    @if (IsFollow)
+    {
+        <div @onclick="() => ToggleFollow(IsFollow)" class="ml-auto px-4 py-2 text-sm font-semibold border bg-sky-400 text-white rounded-full hover:bg-sky-300">
+            フォローを外す
+        </div>
+    }
+    else
+    {
+        <div @onclick="() => ToggleFollow(IsFollow)" class="ml-auto px-4 py-2 text-sm font-semibold border bg-sky-400 text-white rounded-full hover:bg-sky-300">
+            フォローする
+        </div>
+    }
+}
+
+@code {
+    // 表示用ユーザId
+    [Parameter] public string DisplayUserId { get; set; } = "";
+
+    // ログインユーザId
+    [Parameter] public string LoginUserId { get; set; } = "";
+
+    // 対象のユーザーId
+    [Parameter] public string TargetUserId { get; set; } = "";
+
+    // アクティブタブ
+    [Parameter] public bool IsFollow { get; set; } = false;
+
+    // ログインユーザId
+     public string UserId { get; set; } = "";
+
+    /// <summary>
+    /// フォロー切替
+    /// </summary>
+    /// <param name="IsFollow">フォロー状態</param>
+    /// <returns></returns>
+    private void ToggleFollow(bool isFollow)
+    {
+        IsFollow = !isFollow;
+    }
+}

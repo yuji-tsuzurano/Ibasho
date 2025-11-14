@@ -24,9 +24,7 @@
             <div class="p-4">
                 <div class="flex items-end -mt-16">
                     <img class="h-24 w-24 rounded-full border-4 border-white" src="@ProfileInfo.AvatarUrl" alt="My Avatar">
-                    <NavLink href=@($"{Edit.Path}/{DisplayUserId}") class="ml-auto px-4 py-2 text-sm font-semibold border border-gray-300 rounded-full hover:bg-gray-100">
-                        プロフィールを編集
-                    </NavLink>
+                    <ButtonSwitch DisplayUserId="@DisplayUserId" LoginUserId="@LoginUserId" TargetUserId="@TargetUserId" IsFollow="false" />
                 </div>
                 <div class="mt-4">
                     <h2 class="text-xl font-bold">@ProfileInfo.DisplayName</h2>
@@ -51,6 +49,12 @@
     // 表示用ユーザId
     [Parameter] public string DisplayUserId { get; set; } = "";
 
+    // ログインユーザId
+    public string LoginUserId { get; set; } = "";
+
+    // 対象のユーザId
+    public string TargetUserId { get; set; } = "";
+
     // プロフィール情報
     private ProfileInfoDto? ProfileInfo;
 
@@ -59,16 +63,16 @@
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        string? myUserId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
-        if (string.IsNullOrEmpty(myUserId))
+        LoginUserId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider) ?? "";
+        if (string.IsNullOrEmpty(LoginUserId))
         {
             return;
         }
-        string? targetUserId = await GetUserIdUseCase.ExecuteAsync(DisplayUserId);
-        if (string.IsNullOrEmpty(targetUserId))
+        TargetUserId = await GetUserIdUseCase.ExecuteAsync(DisplayUserId) ?? "";
+        if (string.IsNullOrEmpty(TargetUserId))
         {
             return;
         }
-        ProfileInfo = await GetUserProfileUseCase.ExecuteAsync(targetUserId, myUserId);
+        ProfileInfo = await GetUserProfileUseCase.ExecuteAsync(TargetUserId, LoginUserId);
     }
 }
