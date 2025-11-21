@@ -1,16 +1,16 @@
 ﻿@*
     プロフィール編集画面
 *@
-@page "/profile/edit"
+@page "/profile/edit/{DisplayUserId}"
 
 <PageTitle>Ibasho - プロフィール編集</PageTitle>
 
 <div class="space-y-4">
     <div class="flex items-center justify-between p-4 border-b">
         <div class="flex items-center space-x-3">
-            <button onclick="event.preventDefault(); location.href = '/profile';" class="p-2 rounded-full hover:bg-gray-100">
+            <NavLink href=@($"{Profile.Path}/{DisplayUserId}") class="p-2 rounded-full hover:bg-gray-100">
                 <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
+            </NavLink>
             <h1 class="text-xl font-bold text-gray-800">プロフィールを編集</h1>
         </div>
         <button onclick="switchScreen('profile')" class="px-5 py-2 text-sm font-semibold text-white bg-gray-800 rounded-full hover:bg-gray-900">保存</button>
@@ -29,8 +29,17 @@
             </div>
             <div>
                 <label for="edit-bio" class="text-sm font-medium text-gray-700">自己紹介</label>
-                <textarea id="edit-bio" rows="3" class="w-full px-4 py-2 mt-2 text-gray-700 bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400">こんにちは！これはプロフィールの自己紹介文です。Ibashoアプリを作成しています。</textarea>
+                <textarea id="edit-bio" rows="3" class="w-full px-4 py-2 mt-2 text-gray-700 bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400">テストユーザー1です。よろしくお願いします。</textarea>
             </div>
         </form>
     </div>
 </div>
+
+@code {
+    // パス
+    public static string Path = "/profile/edit";
+
+    // 表示用ユーザId
+    [Parameter]
+    public string DisplayUserId { get; set; } = "";
+}

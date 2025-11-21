@@ -1,0 +1,41 @@
+@* 
+    タブ選択コンポーネント
+*@
+@rendermode InteractiveServer
+<nav class="flex">
+    @foreach (var tab in Tabs)
+    {
+        <div @onclick="() => SelectTab(tab)" class="flex-1 text-center py-3 font-medium @GetButtonClass(tab)">@tab</div>
+    }
+</nav>
+
+@code {
+    // タブ情報
+    [Parameter] public List<string> Tabs { get; set; } = new();
+    // アクティブタブ
+    [Parameter] public string ActiveTab { get; set; } = "";
+    // タブ変更時イベント
+    [Parameter] public EventCallback<string> OnTabChanged { get; set; }
+
+    /// <summary>
+    /// タブボタンのクラス取得
+    /// </summary>
+    /// <param name="tab">タブ情報</param>
+    /// <returns></returns>
+    private string GetButtonClass(string tab)
+    {
+        return tab == ActiveTab ? "text-sky-500 border-b-2 border-sky-500" : "text-gray-500 hover:bg-gray-100";
+    }
+
+    /// <summary>
+    /// タブ選択時
+    /// </summary>
+    /// <param name="tab">タブ情報</param>
+    /// <returns></returns>
+    private async Task SelectTab(string tab)
+    {
+        ActiveTab = tab;
+        await OnTabChanged.InvokeAsync(tab);
+    }
+
+}
