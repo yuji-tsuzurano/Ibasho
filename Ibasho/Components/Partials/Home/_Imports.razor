@@ -4,6 +4,7 @@
 
 @* UseCase *@
 @using Ibasho.Application.UseCases.Posts
+@using Ibasho.Application.UseCases.Replies
 
 @* 共通パーシャル *@
 @using Ibasho.Components.Partials.Shared
@@ -11,3 +12,5 @@
 @* DI *@
 @inject CreatePostUseCase CreatePostUseCase
 @inject GetHomeTimelineUseCase GetHomeTimelineUseCase
+@inject GetThreadUseCase GetThreadUseCase
+@inject CreateReplyUseCase CreateReplyUseCase

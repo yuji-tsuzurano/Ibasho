@@ -3,20 +3,20 @@
 *@
 @rendermode InteractiveServer
 
-@* 投稿フォーム *@
+@* 投稿/返信フォーム *@
 <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm mb-4">
     <EditForm Model="this" OnValidSubmit="OnSubmitAsync">
-        <InputTextArea @bind-Value="Content" class="w-full p-2 border-none rounded-lg focus:ring-0 resize-none" rows="3" placeholder="いまどうしてる？" />
+        <InputTextArea @bind-Value="Content" class="w-full p-2 border-none rounded-lg focus:ring-0 resize-none" rows="3" placeholder="@Placeholder" />
         <ValidationMessage For="@(() => Content)" />
         <div class="flex justify-end mt-2">
             <button type="submit" class="px-5 py-2 text-sm font-semibold text-white bg-sky-500 rounded-full hover:bg-sky-600 transition-colors duration-300" disabled="@IsPosting">
                 @if (IsPosting) 
                 { 
-                    <span>投稿中...</span>
+                    <span>@(IsReplyMode ? "返信中..." : "投稿中...")</span>
                 } 
                 else
                 { 
-                    <span>投稿する</span>
+                    <span>@(IsReplyMode ? "返信する" : "投稿する")</span>
                 }
             </button>
         </div>
@@ -30,7 +30,7 @@
 <div class="space-y-3 mt-4">
     @if (Posts == null || Posts.Count == 0)
     {
-        <div class="text-gray-500 text-center py-8">投稿はまだありません</div>
+        <div class="text-gray-500 text-center py-8">@EmptyMessage</div>
     }
     else
     {
@@ -44,6 +44,12 @@
 </div>
 
 @code {
+    // モード: "Home" or "Reply"
+    [Parameter] public string Mode { get; set; } = "Home";
+
+    // 返信モード時の親投稿ID
+    [Parameter] public long ParentPostId { get; set; } = 0;
+
     // 投稿一覧
     [Parameter] public List<PostListItemDto> Posts { get; set; } = new();
 
@@ -56,32 +62,50 @@
     // エラーメッセージ
     public string ErrorMessage { get; set; } = "";
 
+    // 返信モード判定
+    private bool IsReplyMode => Mode == "Reply";
+
+    // プレースホルダー
+    private string Placeholder => IsReplyMode ? "返信を投稿" : "いまどうしてる？";
+
+    // 空メッセージ
+    private string EmptyMessage => IsReplyMode ? "返信はまだありません" : "投稿はまだありません";
+
     /// <summary>
     /// 投稿一覧取得
     /// </summary>
     public async Task GetPostsAsync()
     {
         string? userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
-        if (!string.IsNullOrEmpty(userId))
+        if (string.IsNullOrEmpty(userId))
         {
-            Posts = (await GetHomeTimelineUseCase.ExecuteAsync(userId)).ToList();
+            Posts = new List<PostListItemDto>();
+            return;
+        }
+
+        if (IsReplyMode)
+        {
+            // 返信一覧を取得
+            var (_, replies) = await GetThreadUseCase.ExecuteAsync(ParentPostId, userId);
+            Posts = replies.ToList();
         }
         else
         {
-            Posts = new List<PostListItemDto>();
+            // タイムラインを取得
+            Posts = (await GetHomeTimelineUseCase.ExecuteAsync(userId)).ToList();
         }
         StateHasChanged();
     }
 
     /// <summary>
-    /// 投稿
+    /// 投稿/返信
     /// </summary>
     private async Task OnSubmitAsync()
     {
         ErrorMessage = string.Empty;
         if (string.IsNullOrWhiteSpace(Content))
         {
-            ErrorMessage = "投稿内容を入力してください。";
+            ErrorMessage = IsReplyMode ? "返信内容を入力してください。" : "投稿内容を入力してください。";
             return;
         }
         IsPosting = true;
@@ -93,13 +117,24 @@
                 ErrorMessage = "認証情報が取得できません。";
                 return;
             }
-            await CreatePostUseCase.ExecuteAsync(userId, Content);
+
+            if (IsReplyMode)
+            {
+                // 返信作成
+                await CreateReplyUseCase.ExecuteAsync(userId, ParentPostId, Content);
+            }
+            else
+            {
+                // 新規投稿作成
+                await CreatePostUseCase.ExecuteAsync(userId, Content);
+            }
+
             Content = string.Empty;
             await GetPostsAsync();
         }
         catch (Exception ex)
         {
-            ErrorMessage = "投稿に失敗しました: " + ex.Message;
+            ErrorMessage = (IsReplyMode ? "返信に失敗しました: " : "投稿に失敗しました: ") + ex.Message;
         }
         finally
         {
