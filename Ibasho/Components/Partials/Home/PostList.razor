@@ -45,7 +45,7 @@
 
 @code {
     // 投稿一覧
-    private List<PostListItemDto>? Posts;
+    [Parameter] public List<PostListItemDto> Posts { get; set; } = new();
 
     // 投稿内容
     public string Content { get; set; } = string.Empty;
@@ -54,26 +54,17 @@
     public bool IsPosting { get; set; } = false;
 
     // エラーメッセージ
-    public string? ErrorMessage { get; set; }
-
-    /// <summary>
-    /// 初期表示時
-    /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
-        await GetPostsAsync();
-    }
+    public string ErrorMessage { get; set; } = "";
 
     /// <summary>
     /// 投稿一覧取得
     /// </summary>
     public async Task GetPostsAsync()
     {
-        var userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
+        string? userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
         if (!string.IsNullOrEmpty(userId))
         {
-            var result = await GetHomeTimelineUseCase.ExecuteAsync(userId);
-            Posts = result.ToList();
+            Posts = (await GetHomeTimelineUseCase.ExecuteAsync(userId)).ToList();
         }
         else
         {
@@ -87,7 +78,7 @@
     /// </summary>
     private async Task OnSubmitAsync()
     {
-        ErrorMessage = null;
+        ErrorMessage = string.Empty;
         if (string.IsNullOrWhiteSpace(Content))
         {
             ErrorMessage = "投稿内容を入力してください。";
@@ -96,7 +87,7 @@
         IsPosting = true;
         try
         {
-            var userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
+            string? userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
             if (string.IsNullOrEmpty(userId))
             {
                 ErrorMessage = "認証情報が取得できません。";

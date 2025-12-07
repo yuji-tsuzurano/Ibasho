@@ -2,16 +2,36 @@
     ホーム画面
 *@
 @page "/home"
+@inject GetHomeTimelineUseCase GetHomeTimelineUseCase
 
 <PageTitle>Ibasho - ホーム</PageTitle>
 
 <div class="space-y-4">
     <div class="p-4">
-        <PostList />
+        <PostList Posts="Posts" />
     </div>
 </div>
 
 @code {
     // パス
     public static string Path = "/home";
+
+    // 投稿一覧
+    private List<PostListItemDto>? Posts;
+
+    /// <summary>
+    /// 初期表示時
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        string? userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
+        if (!string.IsNullOrEmpty(userId))
+        {
+            Posts = (await GetHomeTimelineUseCase.ExecuteAsync(userId)).ToList();
+        }
+        else
+        {
+            Posts = new List<PostListItemDto>();
+        }
+    }
 }
