@@ -1,17 +1,21 @@
-﻿@layout Ibasho.Components.Layout.LoginLayout
+@* ========================================
+    Login ページ用 _Imports.razor
+   ======================================== *@
 
-@using Ibasho
-@using Ibasho.Components
-@using Ibasho.Components.Account
-@using Ibasho.Components.Account.Shared
-@using Ibasho.Components.Pages.Home
-@using Ibasho.Application.DTOs.Account
-@using Ibasho.Domain.Entities
+@layout LoginLayout
+
+@* Identity *@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Authentication
 
-@inject IHttpContextAccessor HttpContextAccessor
-@inject SignInManager<ApplicationUser> SignInManager
-@inject ILogger<Login> Logger
+@* Account 関連 *@
+@using Ibasho.Components.Account
+@using Ibasho.Components.Account.Shared
+@using Ibasho.Application.DTOs.Account
+
+@* ページ参照 *@
+@using Ibasho.Components.Pages.Home
+
+@* DI *@
 @inject NavigationManager NavigationManager
-@inject IdentityRedirectManager RedirectManager
+@inject IHttpContextAccessor HttpContextAccessor

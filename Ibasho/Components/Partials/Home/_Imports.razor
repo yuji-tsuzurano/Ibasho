@@ -1,8 +1,13 @@
-﻿@using Ibasho.Application.DTOs
-@using Ibasho.Application.Services.Auth
+﻿@* ========================================
+    Home パーシャル用 _Imports.razor
+   ======================================== *@
+
+@* UseCase *@
 @using Ibasho.Application.UseCases.Posts
+
+@* 共通パーシャル *@
 @using Ibasho.Components.Partials.Shared
 
+@* DI *@
 @inject CreatePostUseCase CreatePostUseCase
 @inject GetHomeTimelineUseCase GetHomeTimelineUseCase
-@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider

@@ -1,0 +1,11 @@
+@* ========================================
+    Partials 用 _Imports.razor
+    パーシャルコンポーネント共通のusing/injectを定義
+   ======================================== *@
+
+@* 共通DTO・サービス *@
+@using Ibasho.Application.DTOs
+@using Ibasho.Application.Services.Auth
+
+@* DI *@
+@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider

@@ -4,12 +4,9 @@
 @page "/profile/{DisplayUserId}"
 @using Ibasho.Application.UseCases.Profiles
 @using Ibasho.Application.UseCases.Users
-@using Ibasho.Application.DTOs
-@using Ibasho.Application.Services.Auth
 @using Ibasho.Components.Partials.Profile
 @inject GetUserProfileUseCase GetUserProfileUseCase
 @inject GetUserIdUseCase GetUserIdUseCase
-@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider
 
 <PageTitle>Ibasho - プロフィール</PageTitle>
 

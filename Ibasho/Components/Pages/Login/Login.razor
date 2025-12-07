@@ -3,6 +3,10 @@
 *@
 @page "/login"
 
+@inject SignInManager<ApplicationUser> SignInManager
+@inject ILogger<Login> Logger
+@inject IdentityRedirectManager RedirectManager
+
 <PageTitle>Ibasho - ログイン</PageTitle>
 
 <div class="text-center">
@@ -19,9 +23,9 @@
         <ValidationMessage For="() => Input.Email" class="text-danger" />
     </div>
     <div>
+        <label for="password" class="text-sm font-medium text-gray-700">パスワード</label>
         <InputText type="password" @bind-Value="Input.Password" class="w-full px-4 py-2 mt-2 text-gray-700 bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400" 
                    autocomplete="current-password" aria-required="true" placeholder="password" />
-        <label for="password" class="text-sm font-medium text-gray-700">パスワード</label>
         <ValidationMessage For="() => Input.Password" class="text-danger" />
     </div>
     <button type="submit" class="w-full px-4 py-3 font-semibold text-white bg-sky-500 rounded-lg hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 transition-colors duration-300">

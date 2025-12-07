@@ -1,0 +1,17 @@
+@* ========================================
+    Pages 用 _Imports.razor
+    ページコンポーネント共通のusing/injectを定義
+   ======================================== *@
+
+@* 認証・認可 *@
+@using Microsoft.AspNetCore.Authorization
+
+@* レイアウト *@
+@using Ibasho.Components.Layout
+
+@* 共通サービス *@
+@using Ibasho.Application.Services.Auth
+@using Ibasho.Application.DTOs
+
+@* DI *@
+@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider

@@ -1,8 +1,10 @@
-﻿@using Ibasho.Application.DTOs
-@using Ibasho.Application.DTOs.Likes
-@using Ibasho.Application.Services.Auth
-@using Ibasho.Application.UseCases.Likes
-@using Ibasho.Components.Partials.Shared
+﻿@* ========================================
+    Shared パーシャル用 _Imports.razor
+   ======================================== *@
 
+@* UseCase *@
+@using Ibasho.Application.UseCases.Likes
+@using Ibasho.Application.DTOs.Likes
+
+@* DI *@
 @inject ToggleLikeUseCase ToggleLikeUseCase
-@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider

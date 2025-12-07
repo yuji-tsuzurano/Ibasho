@@ -1,11 +1,9 @@
-﻿@layout Ibasho.Components.Layout.MainLayout2
-@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@* ========================================
+    Home ページ用 _Imports.razor
+   ======================================== *@
 
-@using Ibasho.Application.DTOs
-@using Ibasho.Application.Services.Auth
-@using Ibasho.Components.Pages.Profile
+@layout MainLayout2
+@attribute [Authorize]
+
+@* パーシャル *@
 @using Ibasho.Components.Partials.Home
-@using Ibasho.Components.Partials.Shared
-
-@inject Ibasho.Application.UseCases.Posts.GetHomeTimelineUseCase GetHomeTimelineUseCase
-@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider

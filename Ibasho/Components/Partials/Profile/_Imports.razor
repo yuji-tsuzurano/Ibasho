@@ -1,0 +1,14 @@
+@* ========================================
+    Profile パーシャル用 _Imports.razor
+   ======================================== *@
+
+@* UseCase *@
+@using Ibasho.Application.UseCases.Profiles
+@using Ibasho.Application.UseCases.Users
+
+@* 共通パーシャル *@
+@using Ibasho.Components.Partials.Shared
+
+@* DI *@
+@inject GetUserPostsUseCase GetUserPostsUseCase
+@inject GetUserIdUseCase GetUserIdUseCase

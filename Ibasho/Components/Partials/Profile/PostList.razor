@@ -3,16 +3,6 @@
 *@
 @rendermode InteractiveServer
 
-@using Ibasho.Application.UseCases.Profiles
-@using Ibasho.Application.UseCases.Users
-@using Ibasho.Components.Partials.Shared
-@using Ibasho.Application.DTOs
-@using Ibasho.Application.Services.Auth
-@using Microsoft.AspNetCore.Components.Authorization
-@inject GetUserPostsUseCase GetUserPostsUseCase
-@inject GetUserIdUseCase GetUserIdUseCase
-@inject AuthenticationStateProvider AuthStateProvider
-
 @* タブ *@
 <div class="border-t border-gray-200">
     <TabSelect Tabs="@TabNames" ActiveTab="@ActiveTab" OnTabChanged="HandleTabChanged" />
