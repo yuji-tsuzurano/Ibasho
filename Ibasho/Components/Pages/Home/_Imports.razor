@@ -8,6 +8,8 @@
 @* UseCase *@
 @using Ibasho.Application.UseCases.Posts
 
-@* パーシャル *@
-@using Ibasho.Components.Partials.Home
-@using Ibasho.Components.Partials.Shared
+@* Container *@
+@using Ibasho.Components.Partials.Container.Home
+
+@* DI *@
+@inject GetHomeTimelineUseCase GetHomeTimelineUseCase

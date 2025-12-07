@@ -36,19 +36,15 @@ else
     // 対象のユーザーId
     [Parameter] public string TargetUserId { get; set; } = "";
 
-    // アクティブタブ
+    // フォロー状態
     [Parameter] public bool IsFollow { get; set; } = false;
-
-    // ログインユーザId
-     public string UserId { get; set; } = "";
 
     /// <summary>
     /// フォロー切替
     /// </summary>
-    /// <param name="IsFollow">フォロー状態</param>
-    /// <returns></returns>
+    /// <param name="isFollow">フォロー状態</param>
     private void ToggleFollow(bool isFollow)
     {
-        IsFollow = !isFollow;
+        // TODO: フォロー切替処理
     }
 }

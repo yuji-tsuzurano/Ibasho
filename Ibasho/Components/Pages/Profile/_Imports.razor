@@ -4,3 +4,15 @@
 
 @layout MainLayout
 @attribute [Authorize]
+
+@* UseCase *@
+@using Ibasho.Application.UseCases.Profiles
+@using Ibasho.Application.UseCases.Users
+
+@* Container *@
+@using Ibasho.Components.Partials.Container.Profile
+
+@* DI *@
+@inject GetUserProfileUseCase GetUserProfileUseCase
+@inject GetUserPostsUseCase GetUserPostsUseCase
+@inject GetUserIdUseCase GetUserIdUseCase

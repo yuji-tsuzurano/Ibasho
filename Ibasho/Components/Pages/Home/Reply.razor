@@ -3,7 +3,7 @@
 *@
 @page "/reply/{PostId:long}"
 @using Ibasho.Application.UseCases.Replies
-@using Ibasho.Components.Partials.Shared
+@using Ibasho.Components.Partials.Container.Home
 @inject GetThreadUseCase GetThreadUseCase
 
 <PageTitle>Ibasho - 返信</PageTitle>
@@ -16,20 +16,8 @@
         </button>
         <h1 class="text-2xl font-bold text-gray-800">ポスト</h1>
     </div>
-
-    @* 元投稿 *@
-    @if (ParentPost == null)
-    {
-        <div class="p-4 text-center text-gray-500">投稿が見つかりません</div>
-    }
-    else
-    {
-        <PostItem Post="@ParentPost" />
-    }
-
-    @* 返信フォーム + 返信一覧 *@
     <div class="p-4">
-        <PostList Mode="Reply" ParentPostId="@PostId" Posts="@Thread" />
+        <ReplyContainer ParentPostId="@PostId" ParentPost="@ParentPost" Posts="@Thread" />
     </div>
 </div>
 
@@ -44,7 +32,7 @@
     private PostListItemDto? ParentPost;
 
     // 返信投稿一覧
-    private List<PostListItemDto>? Thread;
+    private List<PostListItemDto> Thread = new();
 
     /// <summary>
     /// 初期表示時

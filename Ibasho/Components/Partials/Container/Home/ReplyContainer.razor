@@ -1,0 +1,77 @@
+@*
+    返信コンテナー
+*@
+@rendermode InteractiveServer
+
+<div class="space-y-4">
+    @* 元投稿 *@
+    @if (_parentPost != null)
+    {
+        <PostItem Post="@_parentPost" />
+    }
+    else
+    {
+        <div class="p-4 text-center text-gray-500">投稿が見つかりません</div>
+    }
+
+    @* 返信フォーム + 返信一覧 *@
+    <PostList Mode="Reply" Posts="@_posts" OnPostSubmit="@HandleReplySubmit" />
+</div>
+
+@code {
+    // 親投稿ID
+    [Parameter] public long ParentPostId { get; set; } = 0;
+
+    // 親投稿（Pageから渡される）
+    [Parameter] public PostListItemDto? ParentPost { get; set; }
+
+    // 返信一覧（Pageから渡される）
+    [Parameter] public List<PostListItemDto> Posts { get; set; } = new();
+
+    // 内部で管理する親投稿
+    private PostListItemDto? _parentPost;
+
+    // 内部で管理する返信一覧
+    private List<PostListItemDto> _posts = new();
+
+    /// <summary>
+    /// パラメーター設定時
+    /// </summary>
+    protected override void OnParametersSet()
+    {
+        _parentPost = ParentPost;
+        _posts = Posts;
+    }
+
+    /// <summary>
+    /// データ再取得
+    /// </summary>
+    private async Task ReloadDataAsync()
+    {
+        string? userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
+        if (string.IsNullOrEmpty(userId))
+        {
+            _posts = new List<PostListItemDto>();
+            return;
+        }
+        var (parent, replies) = await GetThreadUseCase.ExecuteAsync(ParentPostId, userId);
+        _parentPost = parent;
+        _posts = replies.ToList();
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// 返信送信時のコールバック
+    /// </summary>
+    /// <param name="content">返信内容</param>
+    private async Task HandleReplySubmit(string content)
+    {
+        string? userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
+        if (string.IsNullOrEmpty(userId))
+        {
+            throw new InvalidOperationException("認証情報が取得できません。");
+        }
+        await CreateReplyUseCase.ExecuteAsync(userId, ParentPostId, content);
+        await ReloadDataAsync();
+    }
+}

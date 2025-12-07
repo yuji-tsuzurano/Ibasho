@@ -1,7 +1,6 @@
 @*
     投稿一覧コンポーネント
 *@
-@rendermode InteractiveServer
 
 @* 投稿/返信フォーム *@
 <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm mb-4">
@@ -26,6 +25,7 @@
         }
     </EditForm>
 </div>
+
 @* 投稿一覧 *@
 <div class="space-y-3 mt-4">
     @if (Posts == null || Posts.Count == 0)
@@ -47,11 +47,11 @@
     // モード: "Home" or "Reply"
     [Parameter] public string Mode { get; set; } = "Home";
 
-    // 返信モード時の親投稿ID
-    [Parameter] public long ParentPostId { get; set; } = 0;
-
     // 投稿一覧
     [Parameter] public List<PostListItemDto> Posts { get; set; } = new();
+
+    // 投稿送信時のコールバック
+    [Parameter] public EventCallback<string> OnPostSubmit { get; set; }
 
     // 投稿内容
     public string Content { get; set; } = string.Empty;
@@ -72,33 +72,7 @@
     private string EmptyMessage => IsReplyMode ? "返信はまだありません" : "投稿はまだありません";
 
     /// <summary>
-    /// 投稿一覧取得
-    /// </summary>
-    public async Task GetPostsAsync()
-    {
-        string? userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
-        if (string.IsNullOrEmpty(userId))
-        {
-            Posts = new List<PostListItemDto>();
-            return;
-        }
-
-        if (IsReplyMode)
-        {
-            // 返信一覧を取得
-            var (_, replies) = await GetThreadUseCase.ExecuteAsync(ParentPostId, userId);
-            Posts = replies.ToList();
-        }
-        else
-        {
-            // タイムラインを取得
-            Posts = (await GetHomeTimelineUseCase.ExecuteAsync(userId)).ToList();
-        }
-        StateHasChanged();
-    }
-
-    /// <summary>
-    /// 投稿/返信
+    /// 投稿送信
     /// </summary>
     private async Task OnSubmitAsync()
     {
@@ -111,26 +85,8 @@
         IsPosting = true;
         try
         {
-            string? userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
-            if (string.IsNullOrEmpty(userId))
-            {
-                ErrorMessage = "認証情報が取得できません。";
-                return;
-            }
-
-            if (IsReplyMode)
-            {
-                // 返信作成
-                await CreateReplyUseCase.ExecuteAsync(userId, ParentPostId, Content);
-            }
-            else
-            {
-                // 新規投稿作成
-                await CreatePostUseCase.ExecuteAsync(userId, Content);
-            }
-
+            await OnPostSubmit.InvokeAsync(Content);
             Content = string.Empty;
-            await GetPostsAsync();
         }
         catch (Exception ex)
         {

@@ -1,0 +1,14 @@
+@* ========================================
+    Profile Component 用 _Imports.razor
+   ======================================== *@
+
+@* UseCase (ButtonSwitchで使用) *@
+@using Ibasho.Application.UseCases.Profiles
+@using Ibasho.Application.UseCases.Users
+
+@* 共通コンポーネント *@
+@using Ibasho.Components.Partials.Component.Shared
+
+@* DI (ButtonSwitchで使用) *@
+@inject GetUserPostsUseCase GetUserPostsUseCase
+@inject GetUserIdUseCase GetUserIdUseCase

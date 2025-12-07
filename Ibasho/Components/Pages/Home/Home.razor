@@ -2,13 +2,12 @@
     ホーム画面
 *@
 @page "/home"
-@inject GetHomeTimelineUseCase GetHomeTimelineUseCase
 
 <PageTitle>Ibasho - ホーム</PageTitle>
 
 <div class="space-y-4">
     <div class="p-4">
-        <PostList Posts="Posts" />
+        <HomeContainer Posts="@Posts" />
     </div>
 </div>
 
@@ -17,7 +16,7 @@
     public static string Path = "/home";
 
     // 投稿一覧
-    private List<PostListItemDto>? Posts;
+    private List<PostListItemDto> Posts { get; set; } = new();
 
     /// <summary>
     /// 初期表示時
@@ -28,10 +27,6 @@
         if (!string.IsNullOrEmpty(userId))
         {
             Posts = (await GetHomeTimelineUseCase.ExecuteAsync(userId)).ToList();
-        }
-        else
-        {
-            Posts = new List<PostListItemDto>();
         }
     }
 }

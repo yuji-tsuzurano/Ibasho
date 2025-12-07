@@ -1,0 +1,55 @@
+@*
+    ホームコンテナー
+*@
+@rendermode InteractiveServer
+
+<div class="space-y-4">
+    @* 投稿フォーム + 投稿一覧 *@
+    <PostList Posts="@_posts" OnPostSubmit="@HandlePostSubmit" />
+</div>
+
+@code {
+    // 投稿一覧
+    [Parameter] public List<PostListItemDto> Posts { get; set; } = new();
+
+    // 投稿一覧
+    private List<PostListItemDto> _posts = new();
+
+    /// <summary>
+    /// パラメーター設定時
+    /// </summary>
+    protected override void OnParametersSet()
+    {
+        _posts = Posts;
+    }
+
+    /// <summary>
+    /// 投稿一覧再取得
+    /// </summary>
+    private async Task ReloadPostsAsync()
+    {
+        string? userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
+        if (string.IsNullOrEmpty(userId))
+        {
+            _posts = new List<PostListItemDto>();
+            return;
+        }
+        _posts = (await GetHomeTimelineUseCase.ExecuteAsync(userId)).ToList();
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// 投稿送信時のコールバック
+    /// </summary>
+    /// <param name="content">投稿内容</param>
+    private async Task HandlePostSubmit(string content)
+    {
+        string? userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
+        if (string.IsNullOrEmpty(userId))
+        {
+            throw new InvalidOperationException("認証情報が取得できません。");
+        }
+        await CreatePostUseCase.ExecuteAsync(userId, content);
+        await ReloadPostsAsync();
+    }
+}

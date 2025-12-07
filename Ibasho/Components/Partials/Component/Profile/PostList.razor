@@ -1,12 +1,12 @@
 @*
     投稿一覧コンポーネント
 *@
-@rendermode InteractiveServer
 
 @* タブ *@
 <div class="border-t border-gray-200">
     <TabSelect Tabs="@TabNames" ActiveTab="@ActiveTab" OnTabChanged="HandleTabChanged" />
 </div>
+
 @* 投稿一覧 *@
 <div class="space-y-3 mt-4">
     @if (Posts == null || Posts.Count == 0)
@@ -31,6 +31,9 @@
     // 投稿一覧
     [Parameter] public IReadOnlyList<PostListItemDto>? Posts { get; set; } = [];
 
+    // タブ変更時のコールバック
+    [Parameter] public EventCallback<string> OnTabChanged { get; set; }
+
     // タブ名
     private List<string> TabNames = new() { "投稿", "いいね" };
 
@@ -41,38 +44,9 @@
     /// タブ変更時
     /// </summary>
     /// <param name="changedTab">変更後のタブ</param>
-    /// <returns></returns>
     private async Task HandleTabChanged(string changedTab)
     {
         ActiveTab = changedTab;
-        if (changedTab == TabNames[0])
-        {
-            await GetProfileAsync();
-        }
-        else
-        {
-            Posts = [];
-            StateHasChanged();
-        }
-    }
-
-    /// <summary>
-    /// プロフィール情報取得
-    /// </summary>
-    public async Task GetProfileAsync()
-    {
-        string? myUserId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
-        if (string.IsNullOrEmpty(myUserId))
-        {
-            return;
-        }
-        string? targetUserId = await GetUserIdUseCase.ExecuteAsync(DisplayUserId);
-        if (string.IsNullOrEmpty(targetUserId))
-        {
-            return;
-        }
-
-        Posts = await GetUserPostsUseCase.ExecuteAsync(targetUserId, myUserId);
-        StateHasChanged();
+        await OnTabChanged.InvokeAsync(changedTab);
     }
 }

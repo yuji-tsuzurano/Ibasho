@@ -1,0 +1,78 @@
+@*
+    プロフィールコンテナコンポーネント
+    タブ切替時の再取得を担当するインタラクティブコンポーネント
+*@
+@rendermode InteractiveServer
+
+<div class="mt-4 bg-white rounded-xl shadow-sm overflow-hidden">
+    @* プロフィール *@
+    @if (ProfileInfo != null)
+    {
+        <div>
+            <img class="h-32 w-full object-cover" src="@ProfileInfo.BannerUrl" alt="Profile banner">
+        </div>
+        <div class="p-4">
+            <div class="flex items-end -mt-16">
+                <img class="h-24 w-24 rounded-full border-4 border-white" src="@ProfileInfo.AvatarUrl" alt="My Avatar">
+                <ButtonSwitch DisplayUserId="@DisplayUserId" LoginUserId="@LoginUserId" TargetUserId="@TargetUserId" IsFollow="false" />
+            </div>
+            <div class="mt-4">
+                <h2 class="text-xl font-bold">@ProfileInfo.DisplayName</h2>
+                <p class="text-sm text-gray-500">@("@" + ProfileInfo.DisplayUserId)</p>
+                <p class="mt-2 text-gray-700">@ProfileInfo.Bio</p>
+            </div>
+            <div class="flex mt-4 space-x-4 text-sm text-gray-600">
+                <p class="cursor-pointer"><span class="font-bold text-gray-800">@ProfileInfo.FollowingCount</span> フォロー中</p>
+                <p class="cursor-pointer"><span class="font-bold text-gray-800">@ProfileInfo.FollowerCount</span> フォロワー</p>
+            </div>
+        </div>
+    }
+    @* 投稿一覧 *@
+    <PostList DisplayUserId="@DisplayUserId" Posts="@_posts" OnTabChanged="@HandleTabChanged" />
+</div>
+
+@code {
+    // 表示用ユーザId
+    [Parameter] public string DisplayUserId { get; set; } = "";
+
+    // ログインユーザId
+    [Parameter] public string LoginUserId { get; set; } = "";
+
+    // 対象のユーザId
+    [Parameter] public string TargetUserId { get; set; } = "";
+
+    // プロフィール情報（Pageから渡される）
+    [Parameter] public ProfileInfoDto? ProfileInfo { get; set; }
+
+    // 初期投稿一覧（Pageから渡される）
+    [Parameter] public IReadOnlyList<PostListItemDto> Posts { get; set; } = [];
+
+    // 内部で管理する投稿一覧
+    private IReadOnlyList<PostListItemDto> _posts = [];
+
+    /// <summary>
+    /// パラメーター設定時
+    /// </summary>
+    protected override void OnParametersSet()
+    {
+        _posts = Posts;
+    }
+
+    /// <summary>
+    /// タブ変更時のコールバック
+    /// </summary>
+    /// <param name="tabName">タブ名</param>
+    private async Task HandleTabChanged(string tabName)
+    {
+        if (tabName == "投稿")
+        {
+            _posts = await GetUserPostsUseCase.ExecuteAsync(TargetUserId, LoginUserId);
+        }
+        else
+        {
+            // いいねタブ（未実装）
+            _posts = [];
+        }
+        StateHasChanged();
+    }
+}
