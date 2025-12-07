@@ -29,21 +29,13 @@
     [Parameter] public string DisplayUserId { get; set; } = "";
 
     // 投稿一覧
-    private IReadOnlyList<PostListItemDto>? Posts;
+    [Parameter] public IReadOnlyList<PostListItemDto>? Posts { get; set; } = [];
 
     // タブ名
     private List<string> TabNames = new() { "投稿", "いいね" };
 
     // アクティブタブ
     public string ActiveTab { get; set; } = "投稿";
-
-    /// <summary>
-    /// 初期表示時
-    /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
-        await GetProfileAsync();
-    }
 
     /// <summary>
     /// タブ変更時

@@ -6,6 +6,7 @@
 @using Ibasho.Application.UseCases.Users
 @using Ibasho.Components.Partials.Profile
 @inject GetUserProfileUseCase GetUserProfileUseCase
+@inject GetUserPostsUseCase GetUserPostsUseCase
 @inject GetUserIdUseCase GetUserIdUseCase
 
 <PageTitle>Ibasho - プロフィール</PageTitle>
@@ -35,7 +36,7 @@
             </div>
         }
         @* 投稿一覧 *@
-        <PostList DisplayUserId="@DisplayUserId" />
+        <PostList DisplayUserId="@DisplayUserId" Posts="Posts" />
     </div>
 </div>
 
@@ -55,6 +56,9 @@
     // プロフィール情報
     private ProfileInfoDto? ProfileInfo;
 
+    // 投稿一覧
+    private IReadOnlyList<PostListItemDto>? Posts;
+
     /// <summary>
     /// 初期表示時
     /// </summary>
@@ -71,5 +75,6 @@
             return;
         }
         ProfileInfo = await GetUserProfileUseCase.ExecuteAsync(TargetUserId, LoginUserId);
+        Posts = await GetUserPostsUseCase.ExecuteAsync(TargetUserId, LoginUserId);
     }
 }
