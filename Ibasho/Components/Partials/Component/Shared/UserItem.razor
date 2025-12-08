@@ -1,0 +1,34 @@
+@* 
+    ユーザー情報コンポーネント
+*@
+<div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm flex items-center space-x-4">
+    <NavLink href="@($"/profile/{User.DisplayUserId}")">
+        <img class="w-12 h-12 rounded-full cursor-pointer" src="@(User.AvatarUrl ?? "https://placehold.co/100x100/E2E8F0/4A5568?text=User")" alt="User Avatar">
+    </NavLink>
+    <div class="flex-1">
+        <NavLink href="@($"/profile/{User.DisplayUserId}")" class="hover:underline">
+            <p class="font-bold">@User.DisplayName</p>
+            <p class="text-sm text-gray-500">@($"@{User.DisplayUserId}")</p>
+        </NavLink>
+        @if (!string.IsNullOrEmpty(User.Bio))
+        {
+            <p class="text-sm text-gray-600 mt-1">@User.Bio</p>
+        }
+    </div>
+    @if (ShowFollowButton)
+    {
+        <button class="px-4 py-2 text-sm font-semibold border rounded-full @(User.IsFollowedByCurrentUser ? "bg-gray-100 text-gray-700" : "bg-sky-500 text-white hover:bg-sky-600")">
+            @(User.IsFollowedByCurrentUser ? "フォロー中" : "フォロー")
+        </button>
+    }
+</div>
+
+@code {
+    // ユーザー情報
+    [Parameter]
+    public UserListItemDto User { get; set; } = default!;
+
+    // フォローボタンを表示するか
+    [Parameter]
+    public bool ShowFollowButton { get; set; } = false;
+}

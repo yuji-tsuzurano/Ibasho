@@ -56,7 +56,7 @@
         }
         var (parent, replies) = await GetThreadUseCase.ExecuteAsync(ParentPostId, userId);
         _parentPost = parent;
-        _posts = replies.ToList();
+        _posts = replies.OrderByDescending(x => x.CreatedAt).ToList();
         StateHasChanged();
     }
 

@@ -4,3 +4,13 @@
 
 @layout MainLayout
 @attribute [Authorize]
+
+@* UseCase *@
+@using Ibasho.Application.UseCases.Search
+
+@* Container *@
+@using Ibasho.Components.Partials.Container.Search
+
+@* DI *@
+@inject SearchUsersUseCase SearchUsersUseCase
+@inject SearchPostsUseCase SearchPostsUseCase
