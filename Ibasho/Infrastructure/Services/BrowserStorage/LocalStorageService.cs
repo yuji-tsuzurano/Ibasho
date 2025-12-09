@@ -8,18 +8,10 @@ namespace Ibasho.Infrastructure.Services.BrowserStorage;
 /// ProtectedLocalStorageを使用して暗号化されたローカルストレージアクセスを提供
 /// ブラウザを閉じてもデータは永続化される
 /// </summary>
-public sealed class LocalStorageService : ILocalStorageService
+/// <param name="localStorage">Blazorの暗号化ローカルストレージ</param>
+public sealed class LocalStorageService(ProtectedLocalStorage localStorage) : ILocalStorageService
 {
-    private readonly ProtectedLocalStorage _localStorage;
-
-    /// <summary>
-    /// コンストラクタ
-    /// </summary>
-    /// <param name="localStorage">Blazorの暗号化ローカルストレージ</param>
-    public LocalStorageService(ProtectedLocalStorage localStorage)
-    {
-        _localStorage = localStorage;
-    }
+    private readonly ProtectedLocalStorage _localStorage = localStorage;
 
     /// <summary>
     /// ローカルストレージから値を取得する

@@ -8,18 +8,10 @@ namespace Ibasho.Infrastructure.Services.BrowserStorage;
 /// ProtectedSessionStorageを使用して暗号化されたセッションストレージアクセスを提供
 /// タブを閉じるとデータは消失する
 /// </summary>
-public sealed class SessionStorageService : ISessionStorageService
+/// <param name="sessionStorage">Blazorの暗号化セッションストレージ</param>
+public sealed class SessionStorageService(ProtectedSessionStorage sessionStorage) : ISessionStorageService
 {
-    private readonly ProtectedSessionStorage _sessionStorage;
-
-    /// <summary>
-    /// コンストラクタ
-    /// </summary>
-    /// <param name="sessionStorage">Blazorの暗号化セッションストレージ</param>
-    public SessionStorageService(ProtectedSessionStorage sessionStorage)
-    {
-        _sessionStorage = sessionStorage;
-    }
+    private readonly ProtectedSessionStorage _sessionStorage = sessionStorage;
 
     /// <summary>
     /// セッションストレージから値を取得する
