@@ -6,6 +6,8 @@ using Ibasho.Application.UseCases.Profiles;
 using Ibasho.Application.UseCases.Replies;
 using Ibasho.Application.UseCases.Search;
 using Ibasho.Application.UseCases.Users;
+using Ibasho.Application.Services.BrowserStorage;
+using Ibasho.Infrastructure.Services.BrowserStorage;
 using Ibasho.Components;
 using Ibasho.Components.Account;
 using Ibasho.Components.Pages.Login;
@@ -87,6 +89,10 @@ builder.Services.AddScoped<GetNotificationsUseCase>();
 builder.Services.AddScoped<MarkAllNotificationsReadUseCase>();
 builder.Services.AddScoped<SearchUsersUseCase>();
 builder.Services.AddScoped<GetUserIdUseCase>();
+
+// ブラウザストレージサービスのDI登録（クライアント側で状態を保持）
+builder.Services.AddScoped<ISessionStorageService, SessionStorageService>();
+builder.Services.AddScoped<ILocalStorageService, LocalStorageService>();
 
 WebApplication app = builder.Build();
 

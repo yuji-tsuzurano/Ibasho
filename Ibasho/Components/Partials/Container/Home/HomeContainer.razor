@@ -2,25 +2,27 @@
     ホームコンテナー
 *@
 @rendermode InteractiveServer
+@using Ibasho.Application.Services.BrowserStorage
+@inject ISessionStorageService SessionStorage
 
 <div class="space-y-4">
     @* 投稿フォーム + 投稿一覧 *@
-    <PostList Posts="@_posts" OnPostSubmit="@HandlePostSubmit" />
+    <PostList Posts="@State.Posts" OnPostSubmit="@HandlePostSubmit" />
 </div>
 
 @code {
     // 投稿一覧
     [Parameter] public List<PostListItemDto> Posts { get; set; } = new();
 
-    // 投稿一覧
-    private List<PostListItemDto> _posts = new();
+    // ホーム画面の状態
+    private HomeContainerState State { get; set; } = new();
 
     /// <summary>
     /// パラメーター設定時
     /// </summary>
     protected override void OnParametersSet()
     {
-        _posts = Posts;
+        State.Posts = Posts;
     }
 
     /// <summary>
@@ -31,17 +33,16 @@
         string? userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
         if (string.IsNullOrEmpty(userId))
         {
-            _posts = new List<PostListItemDto>();
+            State.Posts = new List<PostListItemDto>();
             return;
         }
-        _posts = (await GetHomeTimelineUseCase.ExecuteAsync(userId)).ToList();
+        State.Posts = (await GetHomeTimelineUseCase.ExecuteAsync(userId)).ToList();
         StateHasChanged();
     }
 
     /// <summary>
     /// 投稿送信時のコールバック
     /// </summary>
-    /// <param name="content">投稿内容</param>
     private async Task HandlePostSubmit(string content)
     {
         string? userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);

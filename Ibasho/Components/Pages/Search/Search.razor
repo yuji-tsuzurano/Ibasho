@@ -2,7 +2,6 @@
     検索画面
 *@
 @page "/search"
-@page "/search/{Keyword}"
 
 <PageTitle>Ibasho - 検索</PageTitle>
 
@@ -10,7 +9,7 @@
     <div class="p-4">
         <h1 class="text-2xl font-bold text-gray-800">探す</h1>
         <div class="mt-4">
-            <SearchContainer Users="@Users" InitialKeyword="@Keyword" />
+            <SearchContainer />
         </div>
     </div>
 </div>
@@ -18,28 +17,4 @@
 @code {
     // パス
     public static string Path = "/search";
-
-    // 検索キーワード
-    [Parameter] public string Keyword { get; set; } = "";
-
-    // ユーザー一覧
-    private IReadOnlyList<UserListItemDto> Users { get; set; } = [];
-
-    /// <summary>
-    /// 初期表示時
-    /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
-        if (string.IsNullOrWhiteSpace(Keyword))
-        {
-            return;
-        }
-
-        string? userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
-        if (!string.IsNullOrEmpty(userId))
-        {
-            // 初期表示時はユーザー検索を実行
-            Users = await SearchUsersUseCase.ExecuteAsync(Keyword, userId);
-        }
-    }
 }

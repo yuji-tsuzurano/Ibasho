@@ -1,0 +1,15 @@
+@* ========================================
+    Reply Page 用 _Imports.razor
+   ======================================== *@
+
+@* UseCase *@
+@using Ibasho.Application.UseCases.Replies
+
+@* コンポーネント *@
+@using Ibasho.Application.DTOs
+@using Ibasho.Application.Services.Auth
+@using Ibasho.Components.Partials.Container.Reply
+
+@* DI *@
+@inject AuthenticationStateProvider AuthStateProvider
+@inject GetThreadUseCase GetThreadUseCase

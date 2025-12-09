@@ -2,12 +2,14 @@
     返信コンテナー
 *@
 @rendermode InteractiveServer
+@using Ibasho.Application.Services.BrowserStorage
+@inject ISessionStorageService SessionStorage
 
 <div class="space-y-4">
     @* 元投稿 *@
-    @if (_parentPost != null)
+    @if (State.ParentPost != null)
     {
-        <PostItem Post="@_parentPost" />
+        <PostItem Post="@State.ParentPost" />
     }
     else
     {
@@ -15,7 +17,7 @@
     }
 
     @* 返信フォーム + 返信一覧 *@
-    <PostList Mode="Reply" Posts="@_posts" OnPostSubmit="@HandleReplySubmit" />
+    <PostList Mode="Reply" Posts="@State.Posts" OnPostSubmit="@HandleReplySubmit" />
 </div>
 
 @code {
@@ -28,19 +30,16 @@
     // 返信一覧（Pageから渡される）
     [Parameter] public List<PostListItemDto> Posts { get; set; } = new();
 
-    // 内部で管理する親投稿
-    private PostListItemDto? _parentPost;
-
-    // 内部で管理する返信一覧
-    private List<PostListItemDto> _posts = new();
+    // 返信画面の状態
+    private ReplyContainerState State { get; set; } = new();
 
     /// <summary>
     /// パラメーター設定時
     /// </summary>
     protected override void OnParametersSet()
     {
-        _parentPost = ParentPost;
-        _posts = Posts;
+        State.ParentPost = ParentPost;
+        State.Posts = Posts;
     }
 
     /// <summary>
@@ -51,12 +50,12 @@
         string? userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
         if (string.IsNullOrEmpty(userId))
         {
-            _posts = new List<PostListItemDto>();
+            State.Posts = new List<PostListItemDto>();
             return;
         }
         var (parent, replies) = await GetThreadUseCase.ExecuteAsync(ParentPostId, userId);
-        _parentPost = parent;
-        _posts = replies.OrderByDescending(x => x.CreatedAt).ToList();
+        State.ParentPost = parent;
+        State.Posts = replies.OrderByDescending(x => x.CreatedAt).ToList();
         StateHasChanged();
     }
 

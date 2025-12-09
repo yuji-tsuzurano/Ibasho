@@ -2,99 +2,120 @@
     検索コンテナー
 *@
 @rendermode InteractiveServer
+@using Ibasho.Application.Services.BrowserStorage
+@inject ISessionStorageService SessionStorage
 
 <div class="space-y-4">
-    @* 検索フォーム *@
-    <div class="relative">
-        <input type="text" @bind="Keyword" @bind:event="oninput" @onkeydown="HandleKeyDown" placeholder="キーワードで検索" class="w-full pl-10 pr-4 py-2 border rounded-full bg-gray-100 focus:outline-none focus:ring-2 focus:ring-sky-400">
-        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-    </div>
-
-    @* タブ切替 *@
-    <div class="border-b border-gray-200">
-        <TabSelect Tabs="@TabNames" ActiveTab="@ActiveTab" OnTabChanged="HandleTabChanged" />
-    </div>
-
-    @* 検索中表示 *@
-    @if (IsSearching)
+    @if (!IsCashGetting)
     {
-        <div class="text-center text-gray-500 py-8">検索中...</div>
-    }
-    else
-    {
-        @* ユーザー一覧 *@
-        @if (ActiveTab == "ユーザー")
+        @* 検索フォーム *@
+        <div class="relative">
+            <input type="text" @bind="State.Keyword" @bind:event="oninput" @onkeydown="HandleKeyDown" placeholder="キーワードで検索" class="w-full pl-10 pr-4 py-2 border rounded-full bg-gray-100 focus:outline-none focus:ring-2 focus:ring-sky-400">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </div>
+
+        @* タブ切替 *@
+        <div class="border-b border-gray-200">
+            <TabSelect Tabs="@TabNames" ActiveTab="@State.ActiveTab" OnTabChanged="HandleTabChanged" />
+        </div>
+
+        @* 検索中表示 *@
+        @if (IsSearching)
         {
-            @if (_users == null || _users.Count == 0)
-            {
-                <div class="text-center text-gray-500 py-8">
-                    @(string.IsNullOrEmpty(Keyword) ? "キーワードを入力して検索してください" : "ユーザーが見つかりませんでした")
-                </div>
-            }
-            else
-            {
-                <div class="space-y-3">
-                    @foreach (var user in _users)
-                    {
-                        <UserItem User="user" ShowFollowButton="true" />
-                    }
-                </div>
-            }
+            <div class="text-center text-gray-500 py-8">検索中...</div>
         }
-        @* 投稿一覧 *@
         else
         {
-            @if (_posts == null || _posts.Count == 0)
+            @* ユーザー一覧 *@
+            @if (State.ActiveTab == "ユーザー")
             {
-                <div class="text-center text-gray-500 py-8">
-                    @(string.IsNullOrEmpty(Keyword) ? "キーワードを入力して検索してください" : "投稿が見つかりませんでした")
-                </div>
+                @if (State.Users == null || State.Users.Count == 0)
+                {
+                    <div class="text-center text-gray-500 py-8">
+                        @(string.IsNullOrEmpty(State.Keyword) ? "キーワードを入力して検索してください" : "ユーザーが見つかりませんでした")
+                    </div>
+                }
+                else
+                {
+                    <div class="space-y-3">
+                        @foreach (var user in State.Users)
+                        {
+                            <UserItem User="user" ShowFollowButton="true" />
+                        }
+                    </div>
+                }
             }
+            @* 投稿一覧 *@
             else
             {
-                <div class="space-y-3">
-                    @foreach (var post in _posts)
-                    {
-                        <PostItem Post="post" />
-                    }
-                </div>
+                @if (State.Posts == null || State.Posts.Count == 0)
+                {
+                    <div class="text-center text-gray-500 py-8">
+                        @(string.IsNullOrEmpty(State.Keyword) ? "キーワードを入力して検索してください" : "投稿が見つかりませんでした")
+                    </div>
+                }
+                else
+                {
+                    <div class="space-y-3">
+                        @foreach (var post in State.Posts)
+                        {
+                            <PostItem Post="post" />
+                        }
+                    </div>
+                }
             }
         }
     }
 </div>
 
 @code {
-    // 初期ユーザー一覧
-    [Parameter] public IReadOnlyList<UserListItemDto> Users { get; set; } = [];
-
-    // 初期検索キーワード
-    [Parameter] public string InitialKeyword { get; set; } = "";
-
     // タブ名
     private List<string> TabNames = new() { "ユーザー", "投稿" };
 
-    // アクティブタブ
-    private string ActiveTab { get; set; } = "ユーザー";
+    // 検索画面の状態
+    private SearchContainerState State { get; set; } = new();
 
-    // 検索キーワード
-    private string Keyword { get; set; } = "";
+    // キャッシュ取得中フラグ
+    private bool IsCashGetting { get; set; } = true;
 
     // 検索中フラグ
     private bool IsSearching { get; set; } = false;
 
-    // 内部で管理するユーザー一覧
-    private IReadOnlyList<UserListItemDto> _users = [];
-
-    // 内部で管理する投稿一覧
-    private IReadOnlyList<PostListItemDto> _posts = [];
+    /// <summary>
+    /// 初回レンダリング後にブラウザストレージから復元
+    /// </summary>
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await RestoreStateAsync();
+            StateHasChanged();
+        }
+    }
 
     /// <summary>
-    /// パラメーター設定時
+    /// ブラウザストレージから状態を復元
     /// </summary>
-    protected override void OnParametersSet()
+    private async Task RestoreStateAsync()
     {
-        _users = Users;
-        Keyword = InitialKeyword;
+        SearchContainerState? cached = await SessionStorage.GetAsync<SearchContainerState>(SearchContainerState.CacheKey);
+        if (cached == null)
+        {
+            State = new();
+        }
+        else
+        {
+            State = cached;
+        }
+        IsCashGetting = false;
+    }
+
+    /// <summary>
+    /// 状態をブラウザストレージに保存
+    /// </summary>
+    private async Task SaveStateAsync()
+    {
+        await SessionStorage.SetAsync(SearchContainerState.CacheKey, State);
     }
 
     /// <summary>
@@ -113,8 +134,9 @@
     /// </summary>
     private async Task HandleTabChanged(string tab)
     {
-        ActiveTab = tab;
-        if (!string.IsNullOrWhiteSpace(Keyword))
+        State.ActiveTab = tab;
+        await SaveStateAsync();
+        if (!string.IsNullOrWhiteSpace(State.Keyword))
         {
             await SearchAsync();
         }
@@ -125,10 +147,11 @@
     /// </summary>
     private async Task SearchAsync()
     {
-        if (string.IsNullOrWhiteSpace(Keyword))
+        if (string.IsNullOrWhiteSpace(State.Keyword))
         {
-            _users = [];
-            _posts = [];
+            State.Users = [];
+            State.Posts = [];
+            await SaveStateAsync();
             return;
         }
 
@@ -143,14 +166,17 @@
                 return;
             }
 
-            if (ActiveTab == "ユーザー")
+            if (State.ActiveTab == "ユーザー")
             {
-                _users = await SearchUsersUseCase.ExecuteAsync(Keyword, userId);
+                State.Users = await SearchUsersUseCase.ExecuteAsync(State.Keyword, userId);
             }
             else
             {
-                _posts = await SearchPostsUseCase.ExecuteAsync(Keyword, userId);
+                State.Posts = await SearchPostsUseCase.ExecuteAsync(State.Keyword, userId);
             }
+
+            // 検索結果をブラウザストレージに保存
+            await SaveStateAsync();
         }
         finally
         {
