@@ -1,0 +1,115 @@
+@* 
+    通知アイテムコンポーネント
+*@
+@{
+    var linkHref = GetLinkHref();
+}
+
+<NavLink href="@linkHref" class="block">
+    <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm flex items-center space-x-4 hover:bg-gray-50 transition-colors cursor-pointer @(!Notification.IsRead ? "border-l-4 border-l-sky-400" : "")">
+        @* 通知種別アイコン *@
+        @switch (Notification.Type)
+        {
+            case NotificationType.Like:
+                <svg class="w-6 h-6 text-pink-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                </svg>
+                break;
+            case NotificationType.Follow:
+                <svg class="w-6 h-6 text-sky-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                </svg>
+                break;
+            case NotificationType.Reply:
+                <svg class="w-6 h-6 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path>
+                </svg>
+                break;
+            case NotificationType.Mention:
+                <svg class="w-6 h-6 text-purple-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
+                </svg>
+                break;
+        }
+
+        @* アバター *@
+        <img class="w-10 h-10 rounded-full flex-shrink-0" 
+             src="@(Notification.ActorAvatarUrl ?? "https://placehold.co/100x100/E2E8F0/4A5568?text=User")" 
+             alt="User Avatar">
+
+        @* 通知内容 *@
+        <div class="flex-1 min-w-0">
+            <p class="text-sm">
+                <span class="font-bold">@Notification.ActorDisplayName</span>
+                <span class="text-gray-700">@GetNotificationMessage()</span>
+            </p>
+            <p class="text-xs text-gray-400 mt-1">@FormatDate(Notification.CreatedAt)</p>
+        </div>
+    </div>
+</NavLink>
+
+@code {
+    // 通知情報
+    [Parameter]
+    public NotificationItemDto Notification { get; set; } = default!;
+
+    /// <summary>
+    /// 通知種別に応じたリンク先を取得
+    /// </summary>
+    private string GetLinkHref()
+    {
+        return Notification.Type switch
+        {
+            // フォロー通知はユーザープロフィールへ
+            NotificationType.Follow => $"/profile/{Notification.ActorDisplayUserId}",
+            // いいね・リプライ・メンションは対象の投稿へ
+            _ when Notification.PostId.HasValue => $"/reply/{Notification.PostId}",
+            // 投稿IDがない場合はユーザープロフィールへ
+            _ => $"/profile/{Notification.ActorDisplayUserId}"
+        };
+    }
+
+    /// <summary>
+    /// 通知種別に応じたメッセージを取得
+    /// </summary>
+    private string GetNotificationMessage()
+    {
+        return Notification.Type switch
+        {
+            NotificationType.Like => "さんがあなたの投稿に「いいね」しました。",
+            NotificationType.Follow => "さんがあなたをフォローしました。",
+            NotificationType.Reply => "さんがあなたの投稿に返信しました。",
+            NotificationType.Mention => "さんがあなたをメンションしました。",
+            _ => "さんから通知があります。"
+        };
+    }
+
+    /// <summary>
+    /// 日時を相対的な表示形式にフォーマット
+    /// </summary>
+    private string FormatDate(DateTime dateTime)
+    {
+        var diff = DateTime.UtcNow - dateTime;
+
+        if (diff.TotalMinutes < 1)
+        {
+            return "たった今";
+        }
+        else if (diff.TotalMinutes < 60)
+        {
+            return $"{(int)diff.TotalMinutes}分前";
+        }
+        else if (diff.TotalHours < 24)
+        {
+            return $"{(int)diff.TotalHours}時間前";
+        }
+        else if (diff.TotalDays < 7)
+        {
+            return $"{(int)diff.TotalDays}日前";
+        }
+        else
+        {
+            return dateTime.ToString("yyyy/MM/dd");
+        }
+    }
+}

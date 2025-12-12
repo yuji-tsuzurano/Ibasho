@@ -4,3 +4,12 @@
 
 @layout MainLayout
 @attribute [Authorize]
+
+@* UseCase *@
+@using Ibasho.Application.UseCases.Notifications
+
+@* Container *@
+@using Ibasho.Components.Partials.Container.Notifications
+
+@* DI *@
+@inject GetNotificationsUseCase GetNotificationsUseCase

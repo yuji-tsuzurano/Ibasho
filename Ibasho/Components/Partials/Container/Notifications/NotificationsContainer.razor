@@ -1,0 +1,53 @@
+@*
+    通知コンテナー
+*@
+@rendermode InteractiveServer
+
+<div class="space-y-4">
+    @* 全て既読ボタン *@
+    @if (Notifications.Count > 0 && Notifications.Any(n => !n.IsRead))
+    {
+        <div class="flex justify-end">
+            <button @onclick="HandleMarkAllReadAsync" class="text-sm text-sky-500 hover:text-sky-600 font-semibold">
+                すべて既読にする
+            </button>
+        </div>
+    }
+
+    @* 通知一覧 *@
+    @if (Notifications.Count == 0)
+    {
+        <div class="text-center text-gray-500 py-8">通知はありません</div>
+    }
+    else
+    {
+        <div class="space-y-3">
+            @foreach (var notification in Notifications)
+            {
+                <NotificationItem Notification="notification" />
+            }
+        </div>
+    }
+</div>
+
+@code {
+    // 通知一覧（親から渡される）
+    [Parameter] public IReadOnlyList<NotificationItemDto> Notifications { get; set; } = [];
+
+    // 通知一覧再読み込みコールバック
+    [Parameter] public EventCallback OnReload { get; set; }
+
+    /// <summary>
+    /// 全て既読にする
+    /// </summary>
+    private async Task HandleMarkAllReadAsync()
+    {
+        string? userId = await UserAuthHelper.GetUserIdAsync(AuthStateProvider);
+        if (string.IsNullOrEmpty(userId))
+        {
+            return;
+        }
+        await MarkAllNotificationsReadUseCase.ExecuteAsync(userId);
+        await OnReload.InvokeAsync();
+    }
+}
